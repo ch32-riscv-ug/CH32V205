@@ -6,6 +6,8 @@
 
 ### Debug / serial defaults
 
+Where these land **without writing a remap register**. SWD is live at reset; the UART pads are not -- the pin must still be put into alternate-function mode. See `route` in tables/README.ja.md.
+
 | Series | SWDIO | SWCLK | UART TX | UART RX |
 |---|---|---|---|---|
 | CH32V205 | PA13 | PA14 | none by default[^af] | none by default[^af] |
@@ -87,7 +89,7 @@ Pin functions (filterable): [ALL](https://ch32-riscv-ug.github.io/ch32-device-da
 | PA15 | I/O | 39 | 50 | 77 |  |
 | PB0 | I/O/A | 20 | 26 | 35 |  |
 | PB1 | I/O/A | 21 | 27 | 36 |  |
-| PB2 | I/O/A | 22 | - | - |  |
+| PB2 | I/O/A | 22 | 28 | 37 |  |
 | PB3 | I/O/A | 40 | 55 | 89 |  |
 | PB4 | I/O | 41 | 56 | 90 |  |
 | PB5 | I/O/A | 42 | 57 | 91 |  |
@@ -114,8 +116,8 @@ Pin functions (filterable): [ALL](https://ch32-riscv-ug.github.io/ch32-device-da
 | PC10 | I/O | - | 51 | 78 |  |
 | PC11 | I/O | - | 52 | 79 |  |
 | PC12 | I/O | - | 53 | 80 |  |
-| PD0 | I/O | - | - | 81 |  |
-| PD1 | I/O | - | - | 82 |  |
+| PD0 | I/O | 1 | 5 | 81 |  |
+| PD1 | I/O | 2 | 6 | 82 |  |
 | PD2 | I/O | - | 54 | 83 |  |
 | PD3 | I/O | - | - | 84 |  |
 | PD4 | I/O | - | - | 85 |  |
@@ -160,8 +162,10 @@ Pin functions (filterable): [ALL](https://ch32-riscv-ug.github.io/ch32-device-da
 | VDD_2 | P | - | 48 | 75 |  |
 | VDD_4 | P | - | 19 | 28 |  |
 | VDD_5 | P | - | - | 11 |  |
-| VIO_1 | P | 25 | 32 | 50 |  |
-| VIO_3 | P | 48 | 64 | 100 |  |
+| VDD_VIO_1 | P | 25 | - | - |  |
+| VDD_VIO_3 | P | 48 | - | - |  |
+| VIO_1 | P | - | 32 | 50 |  |
+| VIO_3 | P | - | 64 | 100 |  |
 | VREF+ | P | 9 | 13 | 21 |  |
 | VREF- | P | - | - | 20 |  |
 | VSSA | P | 8 | 12 | 19 |  |
