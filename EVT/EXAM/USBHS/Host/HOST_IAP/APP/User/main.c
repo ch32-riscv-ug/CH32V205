@@ -178,7 +178,7 @@ uint8_t  IAP_VerifyCode_Erase( void )
  */
 void GPIO_Cfg_init( void )
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitTypeDef GPIO_InitStructure = {0};
 
     RCC_PB2PeriphClockCmd(RCC_PB2Periph_GPIOA, ENABLE);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;

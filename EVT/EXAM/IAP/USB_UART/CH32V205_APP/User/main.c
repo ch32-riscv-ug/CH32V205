@@ -19,9 +19,10 @@
  */
 
 #include "ch32v205_usbfs_device.h"
+#include "ch32v205_usbhs_device.h"
 #include "debug.h"
 #include "iap.h"
-
+#include "usb_inf.h"
 /* Global define */
 
 /* Global Variable */
@@ -92,8 +93,7 @@ int main(void)
     GPIO_Toggle_INIT();
 
     /* Usb Init */
-    USBFS_RCC_Init( );
-    USBFS_Device_Init( ENABLE );
+    USB_Init(ENABLE);
     USART2_CFG(460800);
     USART2_IT_CFG();
     while(1)

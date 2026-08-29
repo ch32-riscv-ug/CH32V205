@@ -1,5 +1,5 @@
 
-南京沁恒微电子股份有限公司 2025.12
+南京沁恒微电子股份有限公司 2026.08
 最新资料请到我们的网站上查询
 https://wch.cn
 
@@ -32,6 +32,7 @@ https://wch.cn
   |      |      |      |      |-- CoreMark：CoreMark跑分例程
   |      |      |      |      |-- SoftUART：I/O口模拟串口例程
   |      |      |      |      |-- WS2812_LED：通过SPI\PWM操作WS2812例程 
+  |      |      |      |      |-- WUI：WCHGUI例程
   |      |      |      |-- BKP
   |      |      |      |      |-- BKP：BKP例程 
   |      |      |      |-- CAN
@@ -44,6 +45,7 @@ https://wch.cn
   |      |      |      |      |-- DMA_MEM2MEM：储存器到储存器模式例程
   |      |      |      |      |-- DMA_MEM2PERIP：储存器到外设模式、外设到储存器模式例程见各外设子例程
   |      |      |      |      |-- DoubleBuffer_DMA：DMA双缓冲模式例程
+  |      |      |      |      |-- TIM_DMA_SLEEP_MODE: 睡眠模式下TIM_DMA例程
   |      |      |      |-- FLASH
   |      |      |      |      |-- FLASH_Program：FLASH的擦/读/写，以及快速编程
   |      |      |      |-- FreeRTOS：FreeRTOS移植例程  

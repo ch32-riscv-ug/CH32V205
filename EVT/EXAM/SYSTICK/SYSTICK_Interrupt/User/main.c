@@ -32,7 +32,7 @@ void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
  *
  * @return  none
  */
-void SYSTICK_Init_Config(u_int64_t ticks)
+void SYSTICK_Init_Config(uint64_t ticks)
 {
     SysTick->SR &= ~(1 << 0);//clear State flag
     SysTick->CMP = ticks;

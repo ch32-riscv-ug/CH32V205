@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/08/20
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -54,7 +54,6 @@ u8 RGBpbuf1[] = {
 };
 
 u8 RGBpbuf2[] = {
-    0x00, 0xFF, 0x00,
     0x00, 0x00, 0xFF,
     0xFF, 0x00, 0x00,
     0x00, 0xFF, 0x00,
@@ -64,6 +63,7 @@ u8 RGBpbuf2[] = {
     0x00, 0x00, 0xFF,
     0xFF, 0x00, 0x00,
     0x00, 0xFF, 0x00,
+    0x00, 0x00, 0xFF, 
 };
 
 

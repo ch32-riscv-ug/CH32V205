@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
  * File Name          : ch32v205_adc.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/07/08
  * Description        : This file provides all the ADC firmware functions.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -465,22 +465,14 @@ void ADC_DiscModeCmd(ADC_TypeDef *ADCx, FunctionalState NewState)
  *          Rank - The rank in the regular group sequencer.
  *            This parameter must be between 1 to 16.
  *          ADC_SampleTime - The sample time value to be set for the selected channel.
- *            ADC_SampleTime_CyclesMode0 - Sample time equal to 1.5 cycles(CFG bit[5]-ADC_LP=0).
- *                                       - Sample time equal to 7.5 cycles(CFG bit[5]-ADC_LP=1).
- *            ADC_SampleTime_CyclesMode1 - Sample time equal to 7.5 cycles(CFG bit[5]-ADC_LP=0).
- *                                       - Sample time equal to 11.5 cycles(CFG bit[5]-ADC_LP=1).
- *            ADC_SampleTime_CyclesMode2 - Sample time equal to 13.5 cycles(CFG bit[5]-ADC_LP=0).
- *                                       - Sample time equal to 17.5 cycles(CFG bit[5]-ADC_LP=1).
- *            ADC_SampleTime_CyclesMode3 - Sample time equal to 28.5 cycles(CFG bit[5]-ADC_LP=0).
- *                                       - Sample time equal to 27.5 cycles(CFG bit[5]-ADC_LP=1).
- *            ADC_SampleTime_CyclesMode4 - Sample time equal to 41.5 cycles(CFG bit[5]-ADC_LP=0).
- *                                       - Sample time equal to 47.5 cycles(CFG bit[5]-ADC_LP=1).
- *            ADC_SampleTime_CyclesMode5 - Sample time equal to 55.5 cycles(CFG bit[5]-ADC_LP=0).
- *                                       - Sample time equal to 55.5 cycles(CFG bit[5]-ADC_LP=1).
- *            ADC_SampleTime_CyclesMode6 - Sample time equal to 71.5 cycles(CFG bit[5]-ADC_LP=0).
- *                                       - Sample time equal to 71.5 cycles(CFG bit[5]-ADC_LP=1).
- *            ADC_SampleTime_CyclesMode7 - Sample time equal to 239.5 cycles(CFG bit[5]-ADC_LP=0).
- *                                       - Sample time equal to 239.5 cycles(CFG bit[5]-ADC_LP=1).
+ *            ADC_SampleTime_CyclesMode0 - Sample time equal to 3.5 cycles.
+ *            ADC_SampleTime_CyclesMode1 - Sample time equal to 5.5 cycles.
+ *            ADC_SampleTime_CyclesMode2 - Sample time equal to 7.5 cycles.
+ *            ADC_SampleTime_CyclesMode3 - Sample time equal to 11.5 cycles.
+ *            ADC_SampleTime_CyclesMode4 - Sample time equal to 13.5 cycles.
+ *            ADC_SampleTime_CyclesMode5 - Sample time equal to 28.5 cycles.
+ *            ADC_SampleTime_CyclesMode6 - Sample time equal to 41.5 cycles.
+ *            ADC_SampleTime_CyclesMode7 - Sample time equal to 239.5 cycles.
  *
  * @return  none
  */

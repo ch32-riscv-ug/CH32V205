@@ -19,8 +19,11 @@
  */
 
 #include "ch32v205_usbfs_device.h"
+#include "ch32v205_usbhs_device.h"
+#include "ch32v205_gpio.h"
 #include "debug.h"
 #include "iap.h"
+#include "usb_inf.h"
 
 extern u8 End_Flag;
 
@@ -36,10 +39,10 @@ extern u8 End_Flag;
  * @return  none
  */
 void IAP_2_APP(void) {
-    USBFS_Device_Init(DISABLE);
-    GPIO_Cfg_Float();
+    USB_Init(DISABLE);
     RCC_PB2PeriphClockCmd( RCC_PB2Periph_AFIO, DISABLE );
     RCC_HBPeriphClockCmd( RCC_HBPeriph_USBFS, DISABLE );
+    RCC_HBPeriphClockCmd( RCC_HBPeriph_USBHS, DISABLE );
     RCC_PB1PeriphClockCmd(RCC_PB1Periph_USART2,DISABLE);
 
     Delay_Ms(50);
@@ -82,8 +85,7 @@ int main(void)
 #endif
 
     /* Usb Init */
-    USBFS_RCC_Init( );
-    USBFS_Device_Init( ENABLE );
+    USB_Init(ENABLE);
     USART2_CFG(460800);
     while(1)
     {

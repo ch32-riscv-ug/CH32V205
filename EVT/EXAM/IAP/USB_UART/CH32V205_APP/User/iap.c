@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
  * File Name          : iap.c
  * Author             : WCH
- * Version            : V1.0.1
- * Date               : 2025/01/13
+ * Version            : V1.0.2
+ * Date               : 2026/03/27
  * Description        : IAP
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -11,40 +11,27 @@
 *******************************************************************************/
 #include "iap.h"
 #include "string.h"
+#include "flash.h"
 #include "core_riscv.h"
-
+#include "usb_inf.h"
+#include "ch32v205_flash.h"
 /******************************************************************************/
 
 iapfun jump2app;
-u32 Program_addr = FLASH_Base;
-u32 Verify_addr = FLASH_Base;
-u32 User_APP_Addr_offset = 0x5000;
-u8 Verify_Star_flag = 0;
-u8 Fast_Program_Buf[390];
+vu32 Program_addr = FLASH_Base;
+vu32 Verify_addr = FLASH_Base;
+vu32 User_APP_Addr_offset = 0x6000;
+vu8 Verify_Star_flag = 0;
+vu8 Fast_Program_Buf[390];
 u32 Program_Buf[64];
-u32 CodeLen = 0;
-u8 End_Flag = 0;
-u8 EP2_Rx_Buffer[USBD_DATA_SIZE+4];
-#define  isp_cmd_t   ((isp_cmd  *)EP2_Rx_Buffer)
+vu32 CodeLen = 0;
+vu8 End_Flag = 0;
+u8 IAP_Deal_Buf[USBD_DATA_SIZE+4];
+#define  isp_cmd_t   ((isp_cmd  *)IAP_Deal_Buf)
 
-/*********************************************************************
- * @fn      CH32_IAP_Program
- *
- * @brief   adr - the date address
- *          buf - the date buffer
- *
- * @return  none
- */
-void CH32_IAP_Program(u32 adr, u32* buf)
-{
-    u8 i;
+#define  Size_256B         0x100
+#define  Size_4KB          0x1000
 
-    FLASH_BufReset();
-    for(i=0; i<64; i++){
-        FLASH_BufLoad(adr+4*i, buf[i]);
-    }
-    FLASH_ProgramPage_Fast(adr);
-}
 
 /*********************************************************************
  * @fn      Program_Buf_Modify
@@ -71,7 +58,7 @@ void Program_Buf_Modify(void)
 /*********************************************************************
  * @fn      RecData_Deal
  *
- * @brief   UART-USB deal data (deal jump IAP command)
+ * @brief   USB deal data
  *
  * @return  ERR_ERROR - ERROR
  *          ERR_SUCCESS - SUCCESS
@@ -79,41 +66,88 @@ void Program_Buf_Modify(void)
  */
 u8 RecData_Deal(void)
 {
-     u8 s;
-
-     switch ( isp_cmd_t->other.buf[0]) {
-     case CMD_IAP_ERASE:
-         s = ERR_ERROR;
-         break;
-
-     case CMD_IAP_PROM:
-         s = ERR_ERROR;
-         break;
-
-     case CMD_IAP_VERIFY:
-         s = ERR_ERROR;
-         break;
-
-     case CMD_IAP_END:
-         s = ERR_ERROR;
-         break;
-
-     case CMD_JUMP_IAP:
-         FLASH_Unlock_Fast();
+    u8 s;
+    switch ( isp_cmd_t->other.buf[0]) 
+    {
+    case CMD_JUMP_IAP:
          Program_Buf_Modify();
-         FLASH_ErasePage_Fast(CalAddr & 0xFFFFFF00);
+         FLASH_ROM_ERASE(CalAddr & 0xFFFFFF00,Size_256B);
          CH32_IAP_Program(CalAddr & 0xFFFFFF00,(u32*)Program_Buf);
-         FLASH->CTLR |= ((uint32_t)0x00008000);
-         FLASH->CTLR |= ((uint32_t)0x00000080);
+        s = ERR_SUCCESS;
+        break;
+    default:
+        s = ERR_ERROR;
+        break;
+    }
 
-         s = ERR_SUCCESS;
-         break;
-     default:
-         s = ERR_ERROR;
-         break;
-     }
+    return s;
+}
 
-     return s;
+/*********************************************************************
+ * @fn      UART_RecData_Deal
+ *
+ * @brief   UART deal data
+ *
+ * @return  ERR_ERROR - ERROR
+ *          ERR_SUCCESS - SUCCESS
+ *          ERR_End - End
+ */
+u8 UART_RecData_Deal(void)
+{
+    u8 s;
+    switch ( isp_cmd_t->UART.Cmd) {
+    case CMD_JUMP_IAP:
+         Program_Buf_Modify();
+         FLASH_ROM_ERASE(CalAddr & 0xFFFFFF00,Size_256B);
+         CH32_IAP_Program(CalAddr & 0xFFFFFF00,(u32*)Program_Buf);
+        s = ERR_SUCCESS;
+        break;
+    default:
+        s = ERR_ERROR;
+        break;
+    }
+
+    return s;
+}
+
+/*********************************************************************
+ * @fn      GPIO_Cfg_init
+ *
+ * @brief   GPIO init
+ *
+ * @return  none
+ */
+void GPIO_Cfg_init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure = {0};
+
+    RCC_PB2PeriphClockCmd(RCC_PB2Periph_GPIOA, ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+
+/*********************************************************************
+ * @fn      PA0_Check
+ *
+ * @brief   Check PA0 state
+ *
+ * @return  1 - IAP
+ *          0 - APP
+ */
+u8 PA0_Check(void)
+{
+    u8 i, cnt=0;
+
+    GPIO_Cfg_init();
+
+    for(i=0; i<10; i++){
+        if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==0) cnt++;
+        Delay_Ms(5);
+    }
+
+    if(cnt>6) return 0;
+    else return 1;
 }
 
 /*********************************************************************
@@ -130,15 +164,11 @@ void USART2_CFG(u32 baudrate)
 
     RCC_PB2PeriphClockCmd( RCC_PB2Periph_GPIOA, ENABLE);
     RCC_PB1PeriphClockCmd(RCC_PB1Periph_USART2,ENABLE);
-    RCC_PB2PeriphClockCmd(RCC_PB2Periph_AFIO, ENABLE);
-
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF2);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_High;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF2);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -156,7 +186,27 @@ void USART2_CFG(u32 baudrate)
 }
 
 /*********************************************************************
- * @fn      UART2_SendData
+ * @fn      UART2_SendMultiyData
+ *
+ * @brief   Deal device Endpoint 3 OUT.
+ *
+ * @param   l: Data length.
+ *
+ * @return  none
+ */
+void UART2_SendMultiyData(u8* pbuf, u8 num)
+{
+    u8 i = 0;
+
+    while(i<num)
+    {
+        while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+        USART_SendData(USART2, pbuf[i]);
+        i++;
+    }
+}
+/*********************************************************************
+ * @fn      UART2_SendMultiyData
  *
  * @brief   USART2 send date
  *
@@ -178,7 +228,7 @@ void UART2_SendData(u8 data)
  *
  * @return  none
  */
-u8 Uart2_Rx(void)
+u8 UART2_Rx(void)
 {
     while( USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET);
     return USART_ReceiveData( USART2);
@@ -196,42 +246,42 @@ void UART_Rx_Deal(void)
     u8 i, s;
     u16 Data_add = 0;
 
-    if (Uart2_Rx() == Uart_Sync_Head1)
+    if (UART2_Rx() == Uart_Sync_Head1)
     {
-        if (Uart2_Rx() == Uart_Sync_Head2)
+        if (UART2_Rx() == Uart_Sync_Head2)
         {
-            isp_cmd_t->UART.Cmd = Uart2_Rx();
+            isp_cmd_t->UART.Cmd = UART2_Rx();
             Data_add += isp_cmd_t->UART.Cmd;
-            isp_cmd_t->UART.Len = Uart2_Rx();
+            isp_cmd_t->UART.Len = UART2_Rx();
             Data_add += isp_cmd_t->UART.Len;
 
             if(isp_cmd_t->UART.Cmd == CMD_IAP_ERASE ||isp_cmd_t->UART.Cmd == CMD_IAP_VERIFY)
             {
-                isp_cmd_t->other.buf[2] = Uart2_Rx();
+                isp_cmd_t->other.buf[2] = UART2_Rx();
                 Data_add += isp_cmd_t->other.buf[2];
-                isp_cmd_t->other.buf[3] = Uart2_Rx();
+                isp_cmd_t->other.buf[3] = UART2_Rx();
                 Data_add += isp_cmd_t->other.buf[3];
-                isp_cmd_t->other.buf[4] = Uart2_Rx();
+                isp_cmd_t->other.buf[4] = UART2_Rx();
                 Data_add += isp_cmd_t->other.buf[4];
-                isp_cmd_t->other.buf[5] = Uart2_Rx();
+                isp_cmd_t->other.buf[5] = UART2_Rx();
                 Data_add += isp_cmd_t->other.buf[5];
             }
             if ((isp_cmd_t->other.buf[0] == CMD_IAP_PROM) || (isp_cmd_t->other.buf[0] == CMD_IAP_VERIFY))
             {
                 for (i = 0; i < isp_cmd_t->UART.Len; i++) {
-                    isp_cmd_t->UART.data[i] = Uart2_Rx();
+                    isp_cmd_t->UART.data[i] = UART2_Rx();
                     Data_add += isp_cmd_t->UART.data[i];
                 }
             }
-            if (Uart2_Rx() == (uint8_t)(Data_add & 0xFF))
+            if (UART2_Rx() == (uint8_t)(Data_add & 0xFF))
             {
-                if(Uart2_Rx() == (uint8_t)(Data_add >>8))
+                if(UART2_Rx() == (uint8_t)(Data_add >>8))
                 {
-                    if (Uart2_Rx() == Uart_Sync_Head2)
+                    if (UART2_Rx() == Uart_Sync_Head2)
                     {
-                        if (Uart2_Rx() == Uart_Sync_Head1)
+                        if (UART2_Rx() == Uart_Sync_Head1)
                         {
-                            s = RecData_Deal();
+                            s = UART_RecData_Deal();
 
                             if (s != ERR_End)
                             {
@@ -256,4 +306,3 @@ void UART_Rx_Deal(void)
         }
     }
 }
-

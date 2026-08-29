@@ -2,7 +2,7 @@
  * File Name          : iap.h
  * Author             : WCH
  * Version            : V1.0.1
- * Date               : 2025/01/13
+ * Date               : 2025/01/09
  * Description        : IAP
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -15,6 +15,10 @@
 #include "ch32v205.h"
 #include "stdio.h"
 #include "ch32v205_usbfs_device.h"
+#include "ch32v205_usbhs_device.h"
+#define PRINT     0
+
+#define DEF_VERSION       0x0101
 
 #define USBD_DATA_SIZE    64
 #define FLASH_Base        0x08005000
@@ -64,25 +68,16 @@ struct{
 } isp_cmd;
 
 typedef void (*iapfun)(void);
-extern u32 Program_Verify_addr;
-extern u32 User_APP_Addr_offset;
-extern u8 EP2_IN_Flag;
-extern u8 EP2_OUT_Flag;
-extern u16 EP2_Rx_Cnt;
-extern u8 EP2_Tx_Buffer[2];
-extern u16 EP2_Tx_Cnt;
-extern u8 EP2_Rx_Buffer[USBD_DATA_SIZE+4];
-extern u8 End_Flag;
+
+extern u8 IAP_Deal_Buf[USBD_DATA_SIZE+4];
 
 u8 RecData_Deal(void);
+u8 Jmp_APP_flag(void);
 void GPIO_Cfg_init(void);
-void GPIO_Cfg_Float(void);
 u8 PA0_Check(void);
+
 void USART2_CFG(u32 baudrate);
 
 void UART_Rx_Deal(void);
-u8 UART_RecData_Deal(void);
 
 #endif
-
-

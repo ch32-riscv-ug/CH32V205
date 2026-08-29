@@ -27,7 +27,7 @@ u8 NAND_Init(void)
     FSMC_NANDInitTypeDef  FSMC_NANDInitStructure = {0};
     FSMC_NAND_PCCARDTimingInitTypeDef  ComSpaceTiming = {0};
     FSMC_NAND_PCCARDTimingInitTypeDef  AttSpaceTiming = {0};
-    GPIO_InitTypeDef  GPIO_InitStructure;
+    GPIO_InitTypeDef  GPIO_InitStructure = {0};
 
     RCC_PB2PeriphClockCmd(RCC_PB2Periph_GPIOD | RCC_PB2Periph_GPIOE|RCC_PB2Periph_AFIO,ENABLE);
     RCC_HBPeriphClockCmd(RCC_HBPeriph_FSMC,ENABLE);

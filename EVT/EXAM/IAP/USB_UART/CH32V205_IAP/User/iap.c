@@ -1,9 +1,9 @@
 /********************************** (C) COPYRIGHT  *******************************
- * File Name          : iap.c
- * Author             : WCH
- * Version            : V1.0.1
- * Date               : 2025/01/13
- * Description        : IAP
+* File Name          : iap.c
+* Author             : WCH
+* Version            : V1.0.0
+* Date               : 2025/12/01
+* Description        : IAP
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
 * Attention: This software (modified or not) and binary are used for 
@@ -11,40 +11,25 @@
 *******************************************************************************/
 #include "iap.h"
 #include "string.h"
+#include "flash.h"
 #include "core_riscv.h"
-
+#include "usb_inf.h"
 /******************************************************************************/
 
 iapfun jump2app;
-u32 Program_addr = FLASH_Base;
-u32 Verify_addr = FLASH_Base;
-u32 User_APP_Addr_offset = 0x5000;
-u8 Verify_Star_flag = 0;
+vu32 Program_addr = FLASH_Base;
+vu32 Verify_addr = FLASH_Base;
+vu32 User_APP_Addr_offset = 0x5000;
+vu8 Verify_Star_flag = 0;
 u8 Fast_Program_Buf[390];
-u32 CodeLen = 0;
-u8 End_Flag = 0;
-u8 EP2_Rx_Buffer[USBD_DATA_SIZE+4];
-#define  isp_cmd_t   ((isp_cmd  *)EP2_Rx_Buffer)
+vu32 CodeLen = 0;
+vu8 End_Flag = 0;
+u8 IAP_Deal_Buf[USBD_DATA_SIZE+4];
+#define  isp_cmd_t   ((isp_cmd  *)IAP_Deal_Buf)
 
-/*********************************************************************
- * @fn      CH32_IAP_Program
- *
- * @brief   adr - the date address
- *          buf - the date buffer
- *
- * @return  none
- */
-void CH32_IAP_Program(u32 adr, u32* buf)
-{
-    u8 i;
 
-    FLASH_BufReset();
-    for(i=0; i<64; i++){
-        FLASH_BufLoad(adr+4*i, buf[i]);
-    }
-    FLASH_ProgramPage_Fast(adr);
-}
-
+#define  Size_256B         0x100
+#define  Size_4KB          0x1000
 /*********************************************************************
  * @fn      RecData_Deal
  *
@@ -56,13 +41,11 @@ void CH32_IAP_Program(u32 adr, u32* buf)
  */
 u8 RecData_Deal(void)
 {
-     u8 i, s, Lenth;
-
-     Lenth = isp_cmd_t->other.buf[1];
+    uint32_t  i, s, Lenth;
+    Lenth = isp_cmd_t->other.buf[1];
 
      switch ( isp_cmd_t->other.buf[0]) {
      case CMD_IAP_ERASE:
-         FLASH_Unlock_Fast();
          s = ERR_SUCCESS;
          break;
 
@@ -71,16 +54,15 @@ u8 RecData_Deal(void)
              Fast_Program_Buf[CodeLen + i] = isp_cmd_t->program.data[i];
          }
          CodeLen += Lenth;
-         if (CodeLen >= 256) {
-             FLASH_Unlock_Fast();
-             FLASH_ErasePage_Fast(Program_addr);
-             CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
-             CodeLen -= 256;
+         if (CodeLen >= Size_256B) {
+            FLASH_ROM_ERASE(Program_addr,Size_256B);
+            CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
+             CodeLen -= Size_256B;
              for (i = 0; i < CodeLen; i++) {
                  Fast_Program_Buf[i] = Fast_Program_Buf[256 + i];
              }
 
-             Program_addr += 0x100;
+             Program_addr += Size_256B;
 
          }
          s = ERR_SUCCESS;
@@ -88,14 +70,13 @@ u8 RecData_Deal(void)
 
      case CMD_IAP_VERIFY:
          if (Verify_Star_flag == 0) {
-             Verify_Star_flag = 1;
             if(CodeLen != 0)
             {
                 for (i = 0; i < (256 - CodeLen); i++) {
                     Fast_Program_Buf[CodeLen + i] = 0xff;
                 }
 
-                FLASH_ErasePage_Fast(Program_addr);
+                FLASH_ROM_ERASE(Program_addr,Size_256B);
                 CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
                 CodeLen = 0;             
             }
@@ -118,9 +99,8 @@ u8 RecData_Deal(void)
          End_Flag = 1;
          Program_addr = FLASH_Base;
          Verify_addr = FLASH_Base;
-         FLASH_ErasePage_Fast(CalAddr & 0xFFFFFF00);
-         FLASH->CTLR |= ((uint32_t)0x00008000);  //FLASH_Lock_Fast
-         FLASH->CTLR |= ((uint32_t)0x00000080);  //FLASH_Lock
+         FLASH_ROM_ERASE(CalAddr & 0xFFFFFF00,Size_256B);
+
          s = ERR_End;
          break;
 
@@ -147,13 +127,11 @@ u8 RecData_Deal(void)
  */
 u8 UART_RecData_Deal(void)
 {
-    u8 i, s, Lenth;
-
+    uint32_t  i, s, Lenth;
     Lenth = isp_cmd_t->UART.Len;
     switch ( isp_cmd_t->UART.Cmd) {
     case CMD_IAP_ERASE:
 
-        FLASH_Unlock_Fast();
         s = ERR_SUCCESS;
         break;
 
@@ -162,16 +140,15 @@ u8 UART_RecData_Deal(void)
             Fast_Program_Buf[CodeLen + i] = isp_cmd_t->UART.data[i];
         }
         CodeLen += Lenth;
-        if (CodeLen >= 256) {
-            FLASH_Unlock_Fast();
-            FLASH_ErasePage_Fast(Program_addr);
+        if (CodeLen >= Size_256B) {
+            FLASH_ROM_ERASE(Program_addr,Size_256B);
             CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
-            CodeLen -= 256;
+            CodeLen -= Size_256B;
             for (i = 0; i < CodeLen; i++) {
                 Fast_Program_Buf[i] = Fast_Program_Buf[256 + i];
             }
 
-            Program_addr += 0x100;
+            Program_addr += Size_256B;
 
         }
         s = ERR_SUCCESS;
@@ -188,7 +165,7 @@ u8 UART_RecData_Deal(void)
             {
                 Fast_Program_Buf[CodeLen + i] = 0xff;
             }
-            FLASH_ErasePage_Fast(Program_addr);
+            FLASH_ROM_ERASE(Program_addr,Size_256B);
             CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
             CodeLen = 0;
           }
@@ -209,9 +186,7 @@ u8 UART_RecData_Deal(void)
         End_Flag = 1;
         Program_addr = FLASH_Base;
         Verify_addr = FLASH_Base;
-        FLASH_ErasePage_Fast(CalAddr & 0xFFFFFF00);
-        FLASH->CTLR |= ((uint32_t)0x00008000);
-        FLASH->CTLR |= ((uint32_t)0x00000080);
+        FLASH_ROM_ERASE(CalAddr & 0xFFFFFF00,Size_256B);
 
         s = ERR_End;
         break;
@@ -242,21 +217,6 @@ void GPIO_Cfg_init(void)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-}
-
-/*********************************************************************
- * @fn      GPIO_Cfg_Float
- *
- * @brief   GPIO float
- *
- * @return  none
- */
-void GPIO_Cfg_Float(void)
-{
-    GPIO_DeInit(GPIOA);
-    GPIO_DeInit(GPIOC);
-    GPIO_AFIODeInit();
-    RCC_PB2PeriphClockCmd(RCC_PB2Periph_GPIOA | RCC_PB2Periph_GPIOB | RCC_PB2Periph_GPIOC, DISABLE);
 }
 
 /*********************************************************************
@@ -320,6 +280,7 @@ void USART2_CFG(u32 baudrate)
     USART_Init(USART2, &USART_InitStructure);
     USART_Cmd(USART2, ENABLE);
 }
+
 /*********************************************************************
  * @fn      UART2_SendMultiyData
  *

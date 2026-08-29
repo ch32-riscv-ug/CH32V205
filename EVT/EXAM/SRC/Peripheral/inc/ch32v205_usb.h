@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT  *******************************
-* File Name          : ch32h417_usb.h
+* File Name          : ch32V205_usb.h
 * Author             : WCH
 * Version            : V1.0.0
 * Date               : 2025/05/06
@@ -903,4 +903,4 @@ typedef struct __attribute__((packed)) _UDISK_BOC_CSW
 }
 #endif
 
-#endif /* __CH32H417_USB_H */
+#endif /* __CH32V205_USB_H */

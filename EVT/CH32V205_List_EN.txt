@@ -1,5 +1,5 @@
 
-Nanjing Qinheng Microelectronics Co., Ltd. 2025.12
+Nanjing Qinheng Microelectronics Co., Ltd. 2026.08
 
 https://wch-ic.com
 
@@ -32,6 +32,7 @@ Directory
   |      |      |      |      |-- CoreMark：CoreMark routine 
   |      |      |      |      |-- SoftUART：I/O port simulation serial port routine 
   |      |      |      |      |-- WS2812_LED：SPI\PWM Operates WS2812_LED routine
+  |      |      |      |      |-- WUI：WCHGUI routine
   |      |      |      |-- BKP
   |      |      |      |      |-- BKP：BKP routine 
   |      |      |      |-- CAN
@@ -43,7 +44,8 @@ Directory
   |      |      |      |-- DMA
   |      |      |      |      |-- DMA_MEM2MEM: memory to memory mode routine
   |      |      |      |      |-- DMA_MEM2PERIP: see each peripheral subroutine for memory to peripheral mode and peripheral to memory mode routines
-  |      |      |      |      |-- DoubleBuffer_DMA:
+  |      |      |      |      |-- DoubleBuffer_DMA: Double buffer DMA routine
+  |      |      |      |      |-- TIM_DMA_SLEEP_MODE: TIM_DMA in sleep mode routine
   |      |      |      |-- EXTI：external interrupt line routine
   |      |      |      |-- FLASH
   |      |      |      |      |-- FLASH_Program:FLASH erase/read/write, and fast programming 
