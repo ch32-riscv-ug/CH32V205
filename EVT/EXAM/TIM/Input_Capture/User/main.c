@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.1
- * Date               : 2025/09/20
+ * Version            : V1.0.2
+ * Date               : 2026/10/15
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -37,12 +37,16 @@ void TIM1_CC_IRQHandler(void)
 {
 	if( TIM_GetITStatus( TIM1, TIM_IT_CC1 ) != RESET )
 	{
+		#if 0
 		printf( "CH1_Val:%d\r\n", TIM_GetCapture1(TIM1) );
+		#endif
 	}
 
 	if( TIM_GetITStatus( TIM1, TIM_IT_CC2 ) != RESET )
 	{
+		#if 0
 		printf( "CH2_Val:%d\r\n", TIM_GetCapture2(TIM1) );
+		#endif
 	}
 
 	TIM_ClearITPendingBit( TIM1, TIM_IT_CC1 | TIM_IT_CC2 );

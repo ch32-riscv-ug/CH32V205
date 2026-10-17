@@ -252,7 +252,9 @@ void ADC_IRQHandler(void)
         ADC_val1=ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_1);
         ADC_val2=ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_2);
         ADC_val3=ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_3);
+        #if 0
         printf("JADC- %04d   - %04d  - %04d \r\n", ADC_val1,ADC_val2,ADC_val3);
+        #endif
     }
 
     ADC_ClearITPendingBit(ADC1, ADC_IT_JEOC);
@@ -272,7 +274,9 @@ void OPA_IRQHandler(void)
   
    if(OPA1_GetFlagStatus( OPA_FLAG_OUT_POLLIntervalEnd))
     {
+        #if 0
          printf("END\r\n");
+         #endif
     }
 
     OPA1_ClearFlag( OPA_FLAG_OUT_POLLIntervalEnd);

@@ -1,12 +1,12 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2024/10/31
+ * Version            : V1.0.1
+ * Date               : 2024/10/14
  * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for
+* Attention: This software (modified or 14not) and binary are used for
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 /*
@@ -43,15 +43,16 @@ void PIOC_IIC_SLAVE(uint8_t *p_send_addr,uint16_t send_len,uint8_t *p_receive_ad
 #define     PIOC_TIM_PSC512    ((uint8_t)0x01)
 #define     PIOC_TIM_PSC2048   ((uint8_t)0x00)
 
-uint8_t  PIOC_IIC_FLAG=0;
-uint16_t PIOC_IIC_RemainLEN0=0;
-uint16_t PIOC_IIC_RemainLEN1=0;
-uint16_t PIOC_IIC_RemainLEN2=0;
-uint16_t PIOC_IIC_RemainLEN3=0;
-uint8_t  *PIOC_IIC_BUF_ADDR0 = NULL;
-uint8_t  *PIOC_IIC_BUF_ADDR1 = NULL;
-uint8_t  *PIOC_IIC_BUF_ADDR2 = NULL;
-uint8_t  *PIOC_IIC_BUF_ADDR3 = NULL;
+volatile uint8_t  PIOC_IIC_FLAG=0;
+volatile uint16_t PIOC_IIC_RemainLEN0=0;
+volatile uint16_t PIOC_IIC_RemainLEN1=0;
+volatile uint16_t PIOC_IIC_RemainLEN2=0;
+volatile uint16_t PIOC_IIC_RemainLEN3=0;
+
+uint8_t  * volatile PIOC_IIC_BUF_ADDR0 = NULL;
+uint8_t  * volatile PIOC_IIC_BUF_ADDR1 = NULL;
+uint8_t  * volatile PIOC_IIC_BUF_ADDR2 = NULL;
+uint8_t  * volatile PIOC_IIC_BUF_ADDR3 = NULL;
 
 uint8_t rx_buf[100]={0};
 
@@ -402,7 +403,7 @@ int main(void)
     Delay_Init();
     USART_Printf_Init(115200);
     Delay_Ms(100);
-    printf("111SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%u\r\n", SystemCoreClock);
     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     PIOC_INIT();
     PIOC_IIC_INIT(50-1, PIOC_TIM_PSC8, 0X332);    //  160M/8/50=400K

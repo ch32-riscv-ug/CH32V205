@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
 * File Name          : iap.c
 * Author             : WCH
-* Version            : V1.0.0
-* Date               : 2025/12/01
+* Version            : V1.0.1
+* Date               : 2026/10/15
 * Description        : IAP
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -21,7 +21,7 @@ vu32 Program_addr = FLASH_Base;
 vu32 Verify_addr = FLASH_Base;
 vu32 User_APP_Addr_offset = 0x5000;
 vu8 Verify_Star_flag = 0;
-u8 Fast_Program_Buf[390];
+vu8 Fast_Program_Buf[512];
 vu32 CodeLen = 0;
 vu8 End_Flag = 0;
 u8 IAP_Deal_Buf[USBD_DATA_SIZE+4];
@@ -41,8 +41,8 @@ u8 IAP_Deal_Buf[USBD_DATA_SIZE+4];
  */
 u8 RecData_Deal(void)
 {
-    uint32_t  i, s, Lenth;
-    Lenth = isp_cmd_t->other.buf[1];
+    uint32_t  i, s, Length;
+    Length = isp_cmd_t->other.buf[1];
 
      switch ( isp_cmd_t->other.buf[0]) {
      case CMD_IAP_ERASE:
@@ -50,10 +50,10 @@ u8 RecData_Deal(void)
          break;
 
      case CMD_IAP_PROM:
-         for (i = 0; i < Lenth; i++) {
+         for (i = 0; i < Length; i++) {
              Fast_Program_Buf[CodeLen + i] = isp_cmd_t->program.data[i];
          }
-         CodeLen += Lenth;
+         CodeLen += Length;
          if (CodeLen >= Size_256B) {
             FLASH_ROM_ERASE(Program_addr,Size_256B);
             CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
@@ -83,14 +83,14 @@ u8 RecData_Deal(void)
          }
 
          s = ERR_SUCCESS;
-         for (i = 0; i < Lenth; i++) {
+         for (i = 0; i < Length; i++) {
              if (isp_cmd_t->verify.data[i] != *(u8*) (Verify_addr + i)) {
                  s = ERR_ERROR;
                  break;
              }
          }
 
-         Verify_addr += Lenth;
+         Verify_addr += Length;
 
          break;
 
@@ -127,8 +127,8 @@ u8 RecData_Deal(void)
  */
 u8 UART_RecData_Deal(void)
 {
-    uint32_t  i, s, Lenth;
-    Lenth = isp_cmd_t->UART.Len;
+    uint32_t  i, s, Length;
+    Length = isp_cmd_t->UART.Len;
     switch ( isp_cmd_t->UART.Cmd) {
     case CMD_IAP_ERASE:
 
@@ -136,10 +136,10 @@ u8 UART_RecData_Deal(void)
         break;
 
     case CMD_IAP_PROM:
-        for (i = 0; i < Lenth; i++) {
+        for (i = 0; i < Length; i++) {
             Fast_Program_Buf[CodeLen + i] = isp_cmd_t->UART.data[i];
         }
-        CodeLen += Lenth;
+        CodeLen += Length;
         if (CodeLen >= Size_256B) {
             FLASH_ROM_ERASE(Program_addr,Size_256B);
             CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
@@ -171,14 +171,14 @@ u8 UART_RecData_Deal(void)
           }
         }
         s = ERR_SUCCESS;
-        for (i = 0; i < Lenth; i++) {
+        for (i = 0; i < Length; i++) {
             if (isp_cmd_t->UART.data[i] != *(u8*) (Verify_addr + i)) {
                 s = ERR_ERROR;
                 break;
             }
         }
 
-        Verify_addr += Lenth;
+        Verify_addr += Length;
         break;
 
     case CMD_IAP_END:
@@ -302,7 +302,7 @@ void UART2_SendMultiyData(u8* pbuf, u8 num)
     }
 }
 /*********************************************************************
- * @fn      UART2_SendMultiyData
+ * @fn      UART2_SendData
  *
  * @brief   USART2 send date
  *
@@ -413,10 +413,13 @@ void SW_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
  * @return  none
  */
 void SW_Handler(void) {
+    __disable_irq();
     __asm("li  a6, 0x5000");
     __asm("jr  a6");
 
-    while(1);
+    while(1)
+    {
+    }
 }
 
 

@@ -100,7 +100,6 @@ void USBPD_IRQHandler(void)
     {
         USBPD->STATUS |= IF_RX_RESET;
         PD_SINK_Init( );
-        printf("IF_RX_RESET\r\n");
     }
 }
 

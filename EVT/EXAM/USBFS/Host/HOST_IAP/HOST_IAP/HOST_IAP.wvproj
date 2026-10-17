@@ -413,7 +413,7 @@
 				},
 				"debugging": {
 					"debug_level": "default",
-					"debug_format": "default",
+					"debug_format": "dwarf4",
 					"generate_prof_information": false,
 					"generate_gprof_information": false,
 					"other_debugging_flags": ""
@@ -637,7 +637,7 @@
 					"save_restore": false,
 					"other_target_flags": ""
 				},
-				"component_toolchain": "${WCH:Toolchain:GCC12}",
+				"component_toolchain": "${WCH:Toolchain:GCC15}",
 				"name": "dbg"
 			}
 		]

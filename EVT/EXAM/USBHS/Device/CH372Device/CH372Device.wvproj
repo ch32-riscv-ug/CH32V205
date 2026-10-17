@@ -400,7 +400,7 @@
 				},
 				"debugging": {
 					"debug_level": "default",
-					"debug_format": "default",
+					"debug_format": "dwarf4",
 					"generate_prof_information": false,
 					"generate_gprof_information": false,
 					"other_debugging_flags": ""
@@ -624,7 +624,7 @@
 					"save_restore": false,
 					"other_target_flags": ""
 				},
-				"component_toolchain": "${WCH:Toolchain:GCC12}",
+				"component_toolchain": "${WCH:Toolchain:GCC15}",
 				"name": "dbg"
 			}
 		]
@@ -720,8 +720,10 @@
 			"ATTR_BUILD_BEFORE_LAUNCH_ATTR": 2,
 			"GdbServerAllocateConsole": true,
 			"GdbServerAllocateTelnetConsole": false,
+			"SkipDownloadBeforeDebug": false,
 			"StartGdbCLient": true,
-			"UPDATE_THREADLIST_ON_SUSPEND": false
+			"UPDATE_THREADLIST_ON_SUSPEND": false,
+			"DebugInRam": false
 		}
 	}
 }

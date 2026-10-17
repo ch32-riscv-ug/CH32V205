@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/16
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -16,7 +16,7 @@
  Master:SPI1_SCK(PA5)\SPI1_MISO(PA6)\SPI1_MOSI(PA7).
  Slave:SPI1_SCK(PA5)\SPI1_MISO(PA6)\SPI1_MOSI(PA7).
  
- This example demonstrates that Master and Slave use DAM full-duplex transmission
+ This example demonstrates that Master and Slave use DMA full-duplex transmission
  and reception at the same time.
  Note: The two boards download the Master and Slave programs respectively, and power
  on at the same time.
@@ -239,10 +239,12 @@ int main(void)
 
     while (1)
     {
-        while ((!DMA_GetFlagStatus(DMA1, DMA_FLAG_TC2)) && (!DMA_GetFlagStatus(DMA1, DMA_FLAG_TC3)))
+        while ((!DMA_GetFlagStatus(DMA1, DMA_FLAG_TC2)) || (!DMA_GetFlagStatus(DMA1, DMA_FLAG_TC3)))
             ;
+        DMA_ClearFlag(DMA1, DMA_FLAG_TC2);
+        DMA_ClearFlag(DMA1, DMA_FLAG_TC3);
 
-        uint32_t value = memcmp(TxData, RxData, Size);
+        uint32_t value = memcmp(TxData, RxData, Size * sizeof(u16));
 
         if (value == 0)
         {

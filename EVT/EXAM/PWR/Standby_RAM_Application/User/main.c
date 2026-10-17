@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.1
- * Date               : 2025/12/15
+ * Version            : V1.0.2
+ * Date               : 2026/10/14
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -25,9 +25,11 @@
 /* Global define */
 #define _KEEP_4K_RAM    __attribute__((section(".keep_4k_ram"))) //space for keep 4K RAM.
 #define _KEEP_28K_RAM   __attribute__((section(".keep_28k_ram"))) //space for keep 28K RAM.
+#define DATA_SIZE       256U
 
-_KEEP_4K_RAM    u32 DataBuf0[256];
-_KEEP_28K_RAM   u32 DataBuf1[256];
+_KEEP_4K_RAM    u32 DataBuf0[DATA_SIZE];
+_KEEP_28K_RAM   u32 DataBuf1[DATA_SIZE];
+
 /*********************************************************************
  * @fn      TestDataWrite
  *
@@ -39,14 +41,14 @@ void TestDataWrite(void)
 {
     uint32_t i=0;
     /* Write data in 4K RAM */
-    for( i=0; i<256; i++ )
+    for( i=0; i<DATA_SIZE; i++ )
     {
        DataBuf0[i] = 0x1234ABCD;
     }
     printf("Write data in 4K RAM Successfully!\r\n");
 
     /* Write data in 28K RAM */
-    for( i=0; i<256; i++ )
+    for( i=0; i<DATA_SIZE; i++ )
     {
        DataBuf1[i] = 0x55555555;
     }
@@ -64,13 +66,13 @@ void TestDataRead(void)
 {
     uint32_t i=0;
     printf("Read data in 4K RAM:\r\n");
-    for( i=0; i<256; i++ )
+    for( i=0; i<DATA_SIZE; i++ )
     {
         printf("DataBuf0#%d = 0x%08x\r\n",i,DataBuf0[i]);
     }
 
     printf("Read data in 28K RAM:\r\n");
-    for( i=0; i<256; i++ )
+    for( i=0; i<DATA_SIZE; i++ )
     {
         printf("DataBuf1#%d = 0x%08x\r\n",i,DataBuf1[i]);
     }
@@ -115,7 +117,7 @@ int main(void)
     All_GPIO_IPD_Init();
     USART_Printf_Init(115200);
     Delay_Ms(500);
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%u\r\n", SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
     printf("Standby Mode Test\r\n");
     RCC_PB1PeriphClockCmd(RCC_PB1Periph_PWR, ENABLE);
@@ -129,6 +131,5 @@ int main(void)
         TestDataWrite();
         PWR_WakeUpPinCmd(ENABLE);
         PWR_EnterSTANDBYMode_RAM();
-        printf("\r\n ########## \r\n");
     }
 }

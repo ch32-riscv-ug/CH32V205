@@ -1,8 +1,18 @@
+/********************************** (C) COPYRIGHT *******************************
+* File Name          : lcd.h
+* Author             : WCH
+* Version            : V1.0.1
+* Date               : 2026/10/14
+* Description        : This file contains the headers of the TFTLCD.
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
+*******************************************************************************/
 #ifndef __LCDINIT_H
 #define __LCDINIT_H
 
 #include "debug.h"
-
 
 #define USE_HORIZONTAL      0   
 
@@ -119,8 +129,7 @@ void LCD_WriteRAM_Prepare(void);
 void LCD_WriteRAM(u16 RGB_Code);
 void LCD_SSD_BackLightSet(u8 pwm);							
 void LCD_Scan_Dir(u8 dir);									
-void LCD_Display_Dir(u8 dir);								
-void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height);					   						   																			 
+void LCD_Display_Dir(u8 dir);												   						   																			 
 
 #define SSD_HOR_RESOLUTION		800		
 #define SSD_VER_RESOLUTION		480		

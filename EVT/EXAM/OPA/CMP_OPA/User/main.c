@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/15
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -120,7 +120,7 @@ void TIM3_PWM_In(u16 arr, u16 psc, u16 ccp)
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
     TIM_OC4Init(TIM3, &TIM_OCInitStructure);
 
-    TIM_CtrlPWMOutputs(TIM3, ENABLE);
+ 
     TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Disable);
     TIM_ARRPreloadConfig(TIM3, ENABLE);
     TIM_SelectOutputTrigger(TIM3, TIM_TRGOSource_Update);
@@ -237,15 +237,21 @@ void OPA_IRQHandler(void)
 
    if(OPA1_GetFlagStatus( OPA_FLAG_OUT_POLL_CH_1))
     {
+        #if 0
         printf("OPA1_CH1\r\n");
+        #endif
     }
    if(OPA1_GetFlagStatus( OPA_FLAG_OUT_POLL_CH_2))
     {
+        #if 0
         printf("OPA1_CH2\r\n"); 
+        #endif
     }
     if(OPA1_GetFlagStatus( OPA_FLAG_OUT_POLL_CH_3))
     {
+        #if 0
         printf("OPA1_CH3\r\n");
+        #endif
     }
     OPA1_ClearFlag( OPA_FLAG_OUT_POLL_CH_3);
     OPA1_ClearFlag( OPA_FLAG_OUT_POLL_CH_2);
@@ -257,7 +263,9 @@ void TIM1_CC_IRQHandler(void)
 {
 	if( TIM_GetITStatus( TIM1, TIM_IT_CC4 ) != RESET )
 	{
+        #if 0
 		printf( "TIM1_Val:%d\r\n", TIM_GetCapture4( TIM1 ) );
+        #endif
 	}
 	TIM_ClearITPendingBit( TIM1, TIM_IT_CC4  );
 }

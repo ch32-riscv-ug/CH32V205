@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/15
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -124,7 +124,8 @@ int main(void)
     /* The above code is configuring the GPIO pin PA8 as an alternate function push-pull output with a
     maximum speed of 50MHz. It also enables the clock for GPIOA and configures the MCO
     (Microcontroller Clock Output) to use the HSI (High-Speed Internal) clock as the source. */
-    RCC_PB2PeriphClockCmd(RCC_PB2Periph_GPIOA, ENABLE);
+	RCC_PB2PeriphClockCmd(RCC_PB2Periph_GPIOA | RCC_PB2Periph_AFIO, ENABLE);
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource8, GPIO_AF6);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_High;
@@ -173,10 +174,23 @@ int main(void)
             while (!SampleFlag);
             Adjust_val = last_Adjust_val;
             Meas_Freq = last_Meas_Freq;
-            last_Adjust_val - Adjust_val < 0 ? (last_Adjust_val -= 1) : (last_Adjust_val += 1);
+            if (HSI_VALUE > last_Meas_Freq)
+            {
+                last_Adjust_val++;   
+            } else 
+            {
+                last_Adjust_val--;   
+            }
+
+            if (last_Adjust_val < 0)  last_Adjust_val = 0;
+            if (last_Adjust_val > 31) last_Adjust_val = 31;
+
             RCC_AdjustHSICalibrationValue(last_Adjust_val);
-            Delay_Ms(100);
+
+            SampleFlag = 0;
+            while (!SampleFlag);
             last_Meas_Freq = (uint32_t)((float)HSI_VALUE * (float)(HSE_VALUE / 128 / 10) / (float)rtc_cnt);
+
         }
     }
 

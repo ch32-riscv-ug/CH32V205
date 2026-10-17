@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/15
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -15,7 +15,7 @@
  * 6_six_PWM output routine:
  * TIM1_CH1(PA8) TIM1_CH1N(PB13)
  * TIM1_CH2(PA9) TIM1_CH2N(PB14)
- * TIM1_CH2(PA10) TIM1_CH3N(PB15)
+ * TIM1_CH3(PA10) TIM1_CH3N(PB15)
  * PA9 is USRAT1_TX, if you need printf function, you should reselect USART in debug.h.
  * Only channel 1,2,3 have this function.
 */

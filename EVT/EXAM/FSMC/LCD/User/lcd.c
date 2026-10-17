@@ -1,3 +1,14 @@
+/********************************** (C) COPYRIGHT *******************************
+* File Name          : lcd.c
+* Author             : WCH
+* Version            : V1.0.1
+* Date               : 2026/10/14
+* Description        : This file contains the headers of the TFTLCD.
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
+*******************************************************************************/
 #include "debug.h"
 #include "lcd.h"
 #include "font.h"
@@ -439,6 +450,8 @@ void LCD_Scan_Dir(u8 dir)
             case 7:
                 dir = 2;
                 break;
+            default:
+                break;
         }
     }
 
@@ -475,6 +488,8 @@ void LCD_Scan_Dir(u8 dir)
         case D2U_R2L://From bottom to top, from right to left
             regval |= (1 << 7) | (1 << 6) | (1 << 5);
             break;
+        default:
+        break;
     }
 
     if (lcddev.id == 0X5510)dirreg = 0X3600;
@@ -561,12 +576,16 @@ void LCD_DrawPoint(u16 x, u16 y)
     LCD->LCD_RAM = POINT_COLOR;
 }
 
-/**
- * @brief 快速画点
+/*********************************************************************
+ * @fn      LCD_Fast_DrawPoint
  *
- * @param x 坐标
- * @param y
- * @param color 颜色
+ * @brief   fast draw point
+ *
+ * @param   x - X coordinate
+ *          y - Y coordinate
+ *          color - font color
+ *
+ * @return  none
  */
 void LCD_Fast_DrawPoint(u16 x, u16 y, u16 color)
 {
@@ -596,7 +615,7 @@ void LCD_Fast_DrawPoint(u16 x, u16 y, u16 color)
         LCD_WR_DATA(y >> 8);
         LCD_WR_DATA(y & 0XFF);
     }
-    else     //9341/5310/7789等设置坐标
+    else     
     {
         LCD_WR_REG(lcddev.setxcmd);
         LCD_WR_DATA(x >> 8);
@@ -610,35 +629,40 @@ void LCD_Fast_DrawPoint(u16 x, u16 y, u16 color)
     LCD->LCD_RAM=color;
 }
 
-/**
- * @brief SSD1963 背光设置
+/*********************************************************************
+ * @fn      LCD_SSD_BackLightSet
  *
- * @param pwm 背光等级, 0~100.越大越亮.
+ * @brief   set BackLight
+ *
+ * @param   pwm - level
+ *
+ * @return  none
  */
 void LCD_SSD_BackLightSet(u8 pwm)
 {
-    LCD_WR_REG(0xBE);   //配置PWM输出
-    LCD_WR_DATA(0x05);  //1设置PWM频率
-    LCD_WR_DATA(pwm * 2.55);//2设置PWM占空比
-    LCD_WR_DATA(0x01);  //3设置C
-    LCD_WR_DATA(0xFF);  //4设置D
-    LCD_WR_DATA(0x00);  //5设置E
-    LCD_WR_DATA(0x00);  //6设置F
+    LCD_WR_REG(0xBE);   
+    LCD_WR_DATA(0x05); 
+    LCD_WR_DATA(pwm * 2.55);
+    LCD_WR_DATA(0x01); 
+    LCD_WR_DATA(0xFF);  
+    LCD_WR_DATA(0x00); 
+    LCD_WR_DATA(0x00); 
 }
 
 /*********************************************************************
  * @fn      LCD_Display_Dir
  *
- * @brief   设置LCD显示方向
+ * @brief   set display direction
  *
- * @param   dir - d0,竖屏；1,横屏
+ * @param   dir - direction
+ *
  * @return  none
  */
 void LCD_Display_Dir(u8 dir)
 {
-    lcddev.dir = dir;       //竖屏/横屏
+    lcddev.dir = dir;      
 
-    if (dir == 0)           //竖屏
+    if (dir == 0)           
     {
         lcddev.width = 240;
         lcddev.height = 320;
@@ -653,26 +677,26 @@ void LCD_Display_Dir(u8 dir)
         }
         else if (lcddev.id == 0X1963)
         {
-            lcddev.wramcmd = 0X2C;  //设置写入GRAM的指令
-            lcddev.setxcmd = 0X2B;  //设置写X坐标指令
-            lcddev.setycmd = 0X2A;  //设置写Y坐标指令
-            lcddev.width = 480;     //设置宽度480
-            lcddev.height = 800;    //设置高度800
+            lcddev.wramcmd = 0X2C;  
+            lcddev.setxcmd = 0X2B;  
+            lcddev.setycmd = 0X2A;  
+            lcddev.width = 480;     
+            lcddev.height = 800;    
         }
-        else                        //其他IC, 包括: 9341 / 5310 / 7789等IC
+        else                        
         {
             lcddev.wramcmd = 0X2C;
             lcddev.setxcmd = 0X2A;
             lcddev.setycmd = 0X2B;
         }
 
-        if (lcddev.id == 0X5310)    //如果是5310 则表示是 320*480分辨率
+        if (lcddev.id == 0X5310)    
         {
             lcddev.width = 320;
             lcddev.height = 480;
         }
     }
-    else     //横屏
+    else     
     {
         lcddev.width = 320;
         lcddev.height = 240;
@@ -687,96 +711,29 @@ void LCD_Display_Dir(u8 dir)
         }
         else if (lcddev.id == 0X1963)
         {
-            lcddev.wramcmd = 0X2C;  //设置写入GRAM的指令
-            lcddev.setxcmd = 0X2A;  //设置写X坐标指令
-            lcddev.setycmd = 0X2B;  //设置写Y坐标指令
-            lcddev.width = 800;     //设置宽度800
-            lcddev.height = 480;    //设置高度480
+            lcddev.wramcmd = 0X2C; 
+            lcddev.setxcmd = 0X2A;  
+            lcddev.setycmd = 0X2B; 
+            lcddev.width = 800;     
+            lcddev.height = 480;    
         }
-        else                        //其他IC, 包括: 9341 / 5310 / 7789等IC
+        else                        
         {
             lcddev.wramcmd = 0X2C;
             lcddev.setxcmd = 0X2A;
             lcddev.setycmd = 0X2B;
         }
 
-        if (lcddev.id == 0X5310)    //如果是5310 则表示是 320*480分辨率
+        if (lcddev.id == 0X5310)    
         {
             lcddev.width = 480;
             lcddev.height = 320;
         }
     }
 
-    LCD_Scan_Dir(DFT_SCAN_DIR);     //默认扫描方向
+    LCD_Scan_Dir(DFT_SCAN_DIR);    
 }
 
-//设置窗口,并自动设置画点坐标到窗口左上角(sx,sy).
-//sx,sy:窗口起始坐标(左上角)
-//width,height:窗口宽度和高度,必须大于0!!
-//窗体大小:width*height.
-/**
- * @brief 设置窗口,并自动设置画点坐标到窗口左上角(sx,sy).
- * 窗体大小:width*height.
- * @param sx 窗口起始坐标(左上角)
- * @param sy
- * @param width 窗口宽度和高度,必须大于0!!
- * @param height
- */
-void LCD_Set_Window(u16 sx,u16 sy,u16 width,u16 height)
-{
-    // u8 hsareg, heareg, vsareg, veareg;
-    // u16 hsaval, heaval, vsaval, veaval;
-    u16 twidth, theight;
-    twidth = sx + width - 1;
-    theight = sy + height - 1;
-    if (lcddev.id == 0X1963 && lcddev.dir != 1)     //1963
-    {
-        sx = lcddev.width - width - sx;
-        height = sy + height - 1;
-        LCD_WR_REG(lcddev.setxcmd);
-        LCD_WR_DATA(sx >> 8);
-        LCD_WR_DATA(sx & 0XFF);
-        LCD_WR_DATA((sx + width - 1) >> 8);
-        LCD_WR_DATA((sx + width - 1) & 0XFF);
-        LCD_WR_REG(lcddev.setycmd);
-        LCD_WR_DATA(sy >> 8);
-        LCD_WR_DATA(sy & 0XFF);
-        LCD_WR_DATA(height >> 8);
-        LCD_WR_DATA(height & 0XFF);
-    }
-    else if (lcddev.id == 0X5510)
-    {
-        LCD_WR_REG(lcddev.setxcmd);
-        LCD_WR_DATA(sx >> 8);
-        LCD_WR_REG(lcddev.setxcmd + 1);
-        LCD_WR_DATA(sx & 0XFF);
-        LCD_WR_REG(lcddev.setxcmd + 2);
-        LCD_WR_DATA(twidth >> 8);
-        LCD_WR_REG(lcddev.setxcmd + 3);
-        LCD_WR_DATA(twidth & 0XFF);
-        LCD_WR_REG(lcddev.setycmd);
-        LCD_WR_DATA(sy >> 8);
-        LCD_WR_REG(lcddev.setycmd + 1);
-        LCD_WR_DATA(sy & 0XFF);
-        LCD_WR_REG(lcddev.setycmd + 2);
-        LCD_WR_DATA(theight >> 8);
-        LCD_WR_REG(lcddev.setycmd + 3);
-        LCD_WR_DATA(theight & 0XFF);
-    }
-    else     //9341/5310/7789/1963
-    {
-        LCD_WR_REG(lcddev.setxcmd);
-        LCD_WR_DATA(sx >> 8);
-        LCD_WR_DATA(sx & 0XFF);
-        LCD_WR_DATA(twidth >> 8);
-        LCD_WR_DATA(twidth & 0XFF);
-        LCD_WR_REG(lcddev.setycmd);
-        LCD_WR_DATA(sy >> 8);
-        LCD_WR_DATA(sy & 0XFF);
-        LCD_WR_DATA(theight >> 8);
-        LCD_WR_DATA(theight & 0XFF);
-    }
-}
 /*********************************************************************
  * @fn      LCD_Init
  *

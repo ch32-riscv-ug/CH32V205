@@ -183,6 +183,8 @@ SECTIONS
         . = . + __stack_size;
         PROVIDE( _eusrstack = .);
     } >RAM 
+
+	ASSERT(_highcode_vma_end <= _susrstack, "ERROR: .highcode overlaps stack")
 }
 
 

@@ -642,6 +642,10 @@ void USBHS_IRQHandler(void)
                                         break;
                                     }
                                 }
+                                else
+                                {
+                                    errflag = 0xFF;
+                                }
                             }
                             break;
 
@@ -670,6 +674,7 @@ void USBHS_IRQHandler(void)
                                     {
                                         USBHS_EP0_Buf[0] = 0x01;
                                     }
+                                    break;
 
                                 case(DEF_UEP1 | DEF_UEP_IN):
                                     if(((USBHSD->UEP1_TX_CTRL) & USBHS_UEP_T_RES_MASK) == USBHS_UEP_T_RES_STALL)
@@ -784,6 +789,11 @@ void USBHS_IRQHandler(void)
                         {
                             if(USBHS_SetupReqCode == HID_SET_REPORT)
                             {
+                                if( Hid_Report_Ptr + len > sizeof( HID_Report_Buffer ) )
+                                {
+                                    len = sizeof( HID_Report_Buffer ) - Hid_Report_Ptr;
+                                    USBHS_SetupReqLen = len;
+                                }
                                 memcpy(&HID_Report_Buffer[Hid_Report_Ptr], USBHS_EP0_Buf, len);
                                 USBHS_SetupReqLen -= len;
                                 Hid_Report_Ptr += len;
@@ -876,6 +886,10 @@ void USBHS_IRQHandler(void)
                         default:
                             break;
                         }
+                    }
+                    else
+                    {
+                        errflag = 0xFF;
                     }
                 }
                 else

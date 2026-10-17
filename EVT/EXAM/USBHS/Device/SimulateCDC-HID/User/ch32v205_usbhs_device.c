@@ -133,7 +133,7 @@ void USBHS_Device_Endp_Init(void)
 
     USBHSD->UEP2_RX_DMA = (uint32_t)(uint8_t *)&UART_Tx_Buf[0];
     USBHSD->UEP2_TX_DMA = (uint32_t)(uint8_t *)USBHS_EP2_Tx_Buf;
-    USBHSD->UEP3_RX_DMA = (uint32_t)(uint8_t *)USBHS_EP3_Tx_Buf;
+    USBHSD->UEP3_TX_DMA = (uint32_t)(uint8_t *)USBHS_EP3_Tx_Buf;
     USBHSD->UEP4_TX_DMA = (uint32_t)(uint8_t *)USBHS_EP4_Tx_Buf;
     USBHSD->UEP4_RX_DMA = (uint32_t)(uint8_t *)USBHS_EP4_Rx_Buf;
 
@@ -264,8 +264,9 @@ void USBHS_IRQHandler(void)
                                 switch(USBHS_SetupReqCode)
                                 {
                                 case CDC_GET_LINE_CODING:
-                                    pUSBHS_Descr = (uint8_t *)&Uart.Com_Cfg[0];
                                     len = 7;
+                                    pUSBHS_Descr = (uint8_t *)&Uart.Com_Cfg[0];
+                                    memcpy(USBHS_EP0_Buf, pUSBHS_Descr, len);
                                     break;
 
                                 case CDC_SET_LINE_CODING:
@@ -319,7 +320,9 @@ void USBHS_IRQHandler(void)
                             }
                             else
                             {
+                                errflag = 0xFF;
                             }
+
                         }
                         else if(USBHS_SetupReqType & USB_REQ_TYP_VENDOR)
                         {
@@ -648,6 +651,10 @@ void USBHS_IRQHandler(void)
                                         break;
                                     }
                                 }
+                                else
+                                {
+                                    errflag = 0xFF;
+                                }
                             }
                             break;
 
@@ -774,41 +781,59 @@ void USBHS_IRQHandler(void)
                     {
                         if(USBHS_SetupReqType & USB_REQ_TYP_CLASS)
                         {
-                            if(USBHS_SetupReqCode == CDC_SET_LINE_CODING)
+                            if(USBHS_SetupReqIndex == 0)
                             {
-                                USBHS_SetupReqLen = 0;
-                                /* Save relevant parameters such as serial port baud rate */
-                                /* The downlinked data is processed in the endpoint 0 OUT packet, the 7 bytes of the downlink are, in order
-                                4 bytes: baud rate value: lowest baud rate byte, next lowest baud rate byte, next highest baud rate byte, highest baud rate byte.
-                                1 byte: number of stop bits (0: 1 stop bit; 1: 1.5 stop bit; 2: 2 stop bits).
-                                1 byte: number of parity bits (0: None; 1: Odd; 2: Even; 3: Mark; 4: Space).
-                                1 byte: number of data bits (5,6,7,8,16); */
-                                Uart.Com_Cfg[0] = USBHS_EP0_Buf[0];
-                                Uart.Com_Cfg[1] = USBHS_EP0_Buf[1];
-                                Uart.Com_Cfg[2] = USBHS_EP0_Buf[2];
-                                Uart.Com_Cfg[3] = USBHS_EP0_Buf[3];
-                                Uart.Com_Cfg[4] = USBHS_EP0_Buf[4];
-                                Uart.Com_Cfg[5] = USBHS_EP0_Buf[5];
-                                Uart.Com_Cfg[6] = USBHS_EP0_Buf[6];
-                                Uart.Com_Cfg[7] = DEF_UARTx_RX_TIMEOUT;
+                                if(USBHS_SetupReqCode == CDC_SET_LINE_CODING)
+                                {
+                                    USBHS_SetupReqLen = 0;
+                                    /* Save relevant parameters such as serial port baud rate */
+                                    /* The downlinked data is processed in the endpoint 0 OUT packet, the 7 bytes of the downlink are, in order
+                                    4 bytes: baud rate value: lowest baud rate byte, next lowest baud rate byte, next highest baud rate byte, highest baud rate byte.
+                                    1 byte: number of stop bits (0: 1 stop bit; 1: 1.5 stop bit; 2: 2 stop bits).
+                                    1 byte: number of parity bits (0: None; 1: Odd; 2: Even; 3: Mark; 4: Space).
+                                    1 byte: number of data bits (5,6,7,8,16); */
+                                    Uart.Com_Cfg[0] = USBHS_EP0_Buf[0];
+                                    Uart.Com_Cfg[1] = USBHS_EP0_Buf[1];
+                                    Uart.Com_Cfg[2] = USBHS_EP0_Buf[2];
+                                    Uart.Com_Cfg[3] = USBHS_EP0_Buf[3];
+                                    Uart.Com_Cfg[4] = USBHS_EP0_Buf[4];
+                                    Uart.Com_Cfg[5] = USBHS_EP0_Buf[5];
+                                    Uart.Com_Cfg[6] = USBHS_EP0_Buf[6];
+                                    Uart.Com_Cfg[7] = DEF_UARTx_RX_TIMEOUT;
 
-                                /* save bauds */
-                                baudrate = USBHS_EP0_Buf[0];
-                                baudrate += ((uint32_t)USBHS_EP0_Buf[1] << 8);
-                                baudrate += ((uint32_t)USBHS_EP0_Buf[2] << 16);
-                                baudrate += ((uint32_t)USBHS_EP0_Buf[3] << 24);
-                                Uart.Com_Cfg[7] = Uart.Rx_TimeOutMax;
-
-                                /* Uart usb init */
-                                UART_USB_Init();
+                                    /* save bauds */
+                                    baudrate = USBHS_EP0_Buf[0];
+                                    baudrate += ((uint32_t)USBHS_EP0_Buf[1] << 8);
+                                    baudrate += ((uint32_t)USBHS_EP0_Buf[2] << 16);
+                                    baudrate += ((uint32_t)USBHS_EP0_Buf[3] << 24);
+                                    Uart.Com_Cfg[7] = Uart.Rx_TimeOutMax;
+                                    /* Uart usb init */
+                                    UART_USB_Init();
+                                }
+                                else
+                                {
+                                    USBHS_SetupReqLen = 0;
+                                }
                             }
-                            else if(USBHS_SetupReqCode == HID_SET_REPORT)
+                            else if(USBHS_SetupReqIndex == 2)
                             {
-                                memcpy(&HID_Report_Buffer[Hid_Report_Ptr], USBHS_EP0_Buf, len);
-                                USBHS_SetupReqLen -= len;
-                                Hid_Report_Ptr += len;
-                                USBHSD->UEP0_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
-                                USBHSD->UEP0_RX_CTRL = (USBHSD->UEP0_RX_CTRL & USBHS_UEP_R_TOG_MASK) | USBHS_UEP_R_RES_ACK;
+                                if(USBHS_SetupReqCode == HID_SET_REPORT)
+                                {
+                                    if( Hid_Report_Ptr + len > sizeof( HID_Report_Buffer ) )
+                                    {
+                                        len = sizeof( HID_Report_Buffer ) - Hid_Report_Ptr;
+                                        USBHS_SetupReqLen = len;
+                                    }
+                                    memcpy(&HID_Report_Buffer[Hid_Report_Ptr], USBHS_EP0_Buf, len);
+                                    USBHS_SetupReqLen -= len;
+                                    Hid_Report_Ptr += len;
+                                    USBHSD->UEP0_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
+                                    USBHSD->UEP0_RX_CTRL = (USBHSD->UEP0_RX_CTRL & USBHS_UEP_R_TOG_MASK) | USBHS_UEP_R_RES_ACK;
+                                }
+                                else
+                                {
+                                    USBHS_SetupReqLen = 0;
+                                }
                             }
                             else
                             {
@@ -871,7 +896,7 @@ void USBHS_IRQHandler(void)
                     USBHS_EP4_Tx_Buf[i] = ~USBHS_EP4_Rx_Buf[i];
                 }
                 USBHSD->UEP4_TX_LEN = len;
-                USBHSD->UEP4_TX_CTRL = USBHSD->UEP4_TX_CTRL & ~USBHS_UEP_R_RES_MASK | USBHS_UEP_R_RES_ACK;
+                USBHSD->UEP4_TX_CTRL = USBHSD->UEP4_TX_CTRL & ~USBHS_UEP_T_RES_MASK | USBHS_UEP_T_RES_ACK;
 
                 USBHSD->UEP4_RX_CTRL = USBHSD->UEP4_RX_CTRL & ~USBHS_UEP_R_RES_MASK | USBHS_UEP_R_RES_ACK;
                 USBHSD->UEP4_RX_CTRL &= ~USBHS_UEP_R_DONE;
@@ -911,6 +936,10 @@ void USBHS_IRQHandler(void)
                         default:
                             break;
                         }
+                    }
+                    else
+                    {
+                        errflag = 0xFF;
                     }
                 }
                 else

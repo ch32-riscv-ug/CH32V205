@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/16
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -208,6 +208,7 @@ int main(void)
 
         while ((!DMA_GetFlagStatus(DMA1, DMA_FLAG_TC7)))
             ;
+        DMA_ClearFlag(DMA1, DMA_FLAG_TC7);
 
         while (I2C_GetFlagStatus(I2C1, I2C_FLAG_STOPF) == RESET)
             ;

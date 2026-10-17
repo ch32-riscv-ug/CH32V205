@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
  * File Name          : iap.c
  * Author             : WCH
- * Version            : V1.0.2
- * Date               : 2026/03/27
+ * Version            : V1.0.3
+ * Date               : 2026/10/15
  * Description        : IAP
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -17,15 +17,8 @@
 #include "ch32v205_flash.h"
 /******************************************************************************/
 
-iapfun jump2app;
-vu32 Program_addr = FLASH_Base;
-vu32 Verify_addr = FLASH_Base;
-vu32 User_APP_Addr_offset = 0x6000;
-vu8 Verify_Star_flag = 0;
-vu8 Fast_Program_Buf[390];
+
 u32 Program_Buf[64];
-vu32 CodeLen = 0;
-vu8 End_Flag = 0;
 u8 IAP_Deal_Buf[USBD_DATA_SIZE+4];
 #define  isp_cmd_t   ((isp_cmd  *)IAP_Deal_Buf)
 
@@ -205,8 +198,9 @@ void UART2_SendMultiyData(u8* pbuf, u8 num)
         i++;
     }
 }
+
 /*********************************************************************
- * @fn      UART2_SendMultiyData
+ * @fn      UART2_SendData
  *
  * @brief   USART2 send date
  *

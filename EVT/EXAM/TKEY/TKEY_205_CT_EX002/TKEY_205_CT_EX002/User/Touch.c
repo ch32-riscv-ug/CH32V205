@@ -83,7 +83,7 @@ static uint16_t touch_DetecLineSlider (touch_slider_cfg_t *p_slider);
 static uint16_t touch_DetectWheelSlider (touch_wheel_cfg_t *p_wheel);
 
 /*********************************************************************
- * @fn      touch_InitKey
+ * @fn      touch_Init
  *
  * @brief   Initialize the keys. This function is called by tky_Init().
  *
@@ -216,7 +216,7 @@ void touch_ScanEnterSleep (void) {
 }
 
 /*********************************************************************
- * @fn      touch_KeyScan
+ * @fn      touch_Scan
  *
  * @brief   Scans all keys. Non-blocking, called periodically by systick interrupt.
  *
@@ -269,7 +269,7 @@ void touch_GPIOModeCfg (GPIOMode_TypeDef mode, uint32_t channel) {
 }
 
 /*********************************************************************
- * @fn      touch_InitKeyHard
+ * @fn      touch_InitHard
  *
  * @brief   Initializing Touch Keys.
  *
@@ -289,7 +289,7 @@ static void touch_InitHard (void) {
 }
 
 /*********************************************************************
- * @fn      touch_InitKeyVar
+ * @fn      touch_InitVar
  *
  * @brief   Initialize Touch Key Variables.
  *

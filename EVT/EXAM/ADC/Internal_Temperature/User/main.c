@@ -108,6 +108,7 @@ u16 Get_ADC_Val(u8 ch)
  *            ADC_Channel_16 - ADC Channel16 selected.
  *            ADC_Channel_17 - ADC Channel17 selected.
  *
+ *            times - convert times 0x1-0xff.
  * @return  val - The Data conversion value.
  */
 u16 Get_ADC_Average(u8 ch, u8 times)

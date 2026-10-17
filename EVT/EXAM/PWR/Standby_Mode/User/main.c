@@ -1,7 +1,7 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
+ * Version            : V1.0.1
  * Date               : 2025/05/20
  * Description        : Main program body.
  *********************************************************************************
@@ -62,7 +62,7 @@ int main(void)
     All_GPIO_IPD_Init();
     USART_Printf_Init(115200);
     Delay_Ms(500);
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%u\r\n", SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
     printf("Standby Mode Test\r\n");
 
@@ -80,7 +80,5 @@ int main(void)
 
     while(1)
     {
-        Delay_Ms(1000);
-        printf("Run in main\r\n");
     }
 }

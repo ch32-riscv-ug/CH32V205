@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/15
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -64,7 +64,7 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%u\r\n", SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     printf("IAP\r\n");
 #if UPGRADE_MODE == UPGRADE_MODE_COMMAND
@@ -73,14 +73,18 @@ int main(void)
         if(*(uint32_t*)CalAddr != CheckNum)
         {
             IAP_2_APP();
-            while(1);
+            while(1)
+            {
+            }
         }
     }
 #elif UPGRADE_MODE == UPGRADE_MODE_IO
     if(PA0_Check() == 0)
     {
         IAP_2_APP();
-        while(1);
+        while(1)
+        {
+        }
     }
 #endif
 
@@ -97,7 +101,9 @@ int main(void)
         {
             Delay_Ms(10);
             IAP_2_APP();
-            while(1);
+            while(1)
+            {
+            }
         }
 #endif
     }

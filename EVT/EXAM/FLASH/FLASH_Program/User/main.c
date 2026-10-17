@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.1
- * Date               : 2026/08/18
+ * Version            : V1.0.2
+ * Date               : 2026/10/15
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -126,12 +126,16 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
 
-    Delay_Ms(1000);
     USART_Printf_Init(115200);
-    printf("SystemClk-1:%d\r\n", SystemCoreClock);
+    printf("SystemClk-1:%u\r\n", SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
+
+    __disable_irq();
     Flash_Test_Fast();
     Option_Byte_CFG();
+    __enable_irq();
 
-    while(1);
+    while(1)
+    {
+    }
 }

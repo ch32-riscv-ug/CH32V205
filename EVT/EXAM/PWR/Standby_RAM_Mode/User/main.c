@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2025/10/14
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -22,7 +22,21 @@
 
 #include "debug.h"
 
+#define RAM_BASE            0x20000000U
+#define RAM4K_BASE          (RAM_BASE)                
+#define RAM28K_BASE         (RAM_BASE + 4U * 1024U)    
+#define RAM28K_SIZE         (28U * 1024U)
 
+
+#define RAM28K_TEST_ADDR    (RAM_BASE + 4U * 1024U) 
+#define RAM28K_TEST_WORDS   1048U            
+#define RAM4K_TEST_ADDR     (RAM_BASE + 3U * 1024U)
+#define RAM4K_TEST_WORDS    200U 
+
+#define RAM_TEST_OK      0U
+#define RAM_TEST_FAIL    1U
+
+#define RAM_TEST_PATTERN    0x5555FFFFU
 /*********************************************************************
  * @fn      TestDataWrite
  *
@@ -30,38 +44,40 @@
  *
  * @return  none
  */
-void TestDataWrite(void)
+uint32_t TestDataWrite(void)
 {
-    uint32_t myAddr=0x20000000+4*1024;
-    uint32_t myAddr2=0x20000000+3*1024;
     uint32_t i=0;
-    for(i=0;i<5120;i++)//Write 28K RAM
+    uint32_t myAddr = RAM28K_TEST_ADDR;
+    uint32_t myAddr2 = RAM4K_TEST_ADDR;
+    
+    for(i=0; i<RAM28K_TEST_WORDS; i++)//Write 28KRAM
     {
-        *(uint32_t volatile *)(myAddr+(i<<2)) = 0x33333333;
+        *(uint32_t volatile *)(myAddr+(i<<2)) = RAM_TEST_PATTERN;
     }
-    for(i=0;i<5120;i++)//Check 28K RAM
+    for(i=0; i<RAM28K_TEST_WORDS; i++)//Check 28KRAM
     {
-        if((*(uint32_t volatile *)(myAddr+(i<<2))) != 0x33333333)
+        if((*(uint32_t volatile *)(myAddr+(i<<2))) != RAM_TEST_PATTERN)
         {
-            printf("Write 28K RAM Error!\r\n");
-            break;
+            printf("28K RAM write error at 0x%08x\r\n", (unsigned)(myAddr + (i << 2)));
+            return RAM_TEST_FAIL;
         }
     }
     printf("Write 28K RAM Successfully!\r\n");
-    for(i=0;i<200;i++)//Write 4K RAM
+
+    for(i=0; i<RAM4K_TEST_WORDS; i++)//Write 4KRAM
     {
-        *(uint32_t volatile *)(myAddr2+(i<<2)) = 0x55555555;
+        *(uint32_t volatile *)(myAddr2+(i<<2)) = RAM_TEST_PATTERN;
     }
-    for(i=0;i<200;i++)//Check 4K RAM
+    for(i=0; i<RAM4K_TEST_WORDS; i++)//Check 4KRAM
     {
-        if((*(uint32_t volatile *)(myAddr2+(i<<2))) != 0x55555555)
+        if((*(uint32_t volatile *)(myAddr2+(i<<2))) != RAM_TEST_PATTERN)
         {
-            printf("Write 4K RAM Error!\r\n");
-            break;
+            printf("4K RAM write error at 0x%08x\r\n", (unsigned)(myAddr2 + (i << 2)));
+            return RAM_TEST_FAIL;
         }
     }
     printf("Write 4K RAM Successfully!\r\n");
-
+    return RAM_TEST_OK;
 }
 
 
@@ -74,20 +90,21 @@ void TestDataWrite(void)
  */
 void TestDataRead(void)
 {
-    uint32_t myAddr=0x20000000+4*1024;
-    uint32_t myAddr2=0x20000000+3*1024;
     uint32_t i=0;
+
     printf("4K RAM:\r\n");
-    for(i=0;i<200;i++)
+    for(i=0; i<RAM4K_TEST_WORDS; i++)
     {
-        printf("0x%08x=0x%08x\r\n",myAddr2+(i<<2),*(uint32_t volatile *)(myAddr2+(i<<2)));
-    }
-    printf("28K RAM:\r\n");
-    for(i=0;i<5120;i++)
-    {
-        printf("0x%08x=0x%08x\r\n",myAddr+(i<<2),*(uint32_t volatile *)(myAddr+(i<<2)));
+        printf("0x%08x=0x%08x\r\n", (unsigned)(RAM4K_TEST_ADDR + (i << 2)),
+               (unsigned)*(uint32_t volatile *)(RAM4K_TEST_ADDR + (i << 2)));
     }
 
+    printf("28K RAM:\r\n");
+    for(i=0; i<RAM28K_TEST_WORDS; i++)
+    {
+        printf("0x%08x=0x%08x\r\n", (unsigned)(RAM28K_TEST_ADDR + (i << 2)),
+               (unsigned)*(uint32_t volatile *)(RAM28K_TEST_ADDR + (i << 2)));
+    }
 }
 
 /*********************************************************************
@@ -129,7 +146,7 @@ int main(void)
     All_GPIO_IPD_Init();
     USART_Printf_Init(115200);
     Delay_Ms(500);
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%u\r\n", SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
     printf("Standby Mode Test\r\n");
     RCC_PB1PeriphClockCmd(RCC_PB1Periph_PWR, ENABLE);
@@ -140,9 +157,11 @@ int main(void)
     {
         TestDataRead();
         printf("RAM LV Mode Test\r\n");
-        TestDataWrite();
+        if(TestDataWrite() != RAM_TEST_OK)
+        {
+            printf("RAM write/verify failed\r\n");
+        }
         PWR_WakeUpPinCmd(ENABLE);
         PWR_EnterSTANDBYMode_RAM();
-        printf("\r\n ########## \r\n");
     }
 }

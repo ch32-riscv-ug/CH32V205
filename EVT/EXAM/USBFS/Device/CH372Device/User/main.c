@@ -16,7 +16,7 @@
   This routine demonstrates the use of a USBFS Device to emulate a custom device, the CH372,
   with endpoints 1/3/5 downlinking data and uploading via endpoints 2/4/6 respectively
   Endpoint 1/2 uploads and downlinks via ring buffer with no data reversal, endpoints 3/4, and endpoints 5/6 copy and upload.
-  The device can be operated using Bushund or other upper computer software.
+  The device can be operated using BusHound or other upper computer software.
   Note: This routine needs to be demonstrated in conjunction with the host software.
 
 */

@@ -17,7 +17,7 @@
 uint32_t timecnt=0;
 uint8_t volatile timerFlag = 0;
 uint8_t volatile TKY_ScanFlag = 0;
-static uint16_t print_time = 0;
+static volatile uint16_t print_time = 0;
 extern volatile uint8_t led_scanflag;
 
 static const uint8_t touch_key_ch[ TOUCH_KEY_ELEMENTS ] = {TOUCH_KEY_CHS};

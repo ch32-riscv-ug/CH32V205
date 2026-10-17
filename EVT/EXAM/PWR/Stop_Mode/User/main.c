@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/14
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -27,8 +27,8 @@
 #define  Enter_WFI   0
 #define  Enter_WFE   1
 
-// #define  Enter_MODE  Enter_WFI
-#define  Enter_MODE  Enter_WFE
+#define  Enter_MODE  Enter_WFI
+// #define  Enter_MODE  Enter_WFE
 
 /*********************************************************************
  * @fn      EXTI0_INT_INIT
@@ -106,7 +106,7 @@ int main(void)
     All_GPIO_IPD_Init();
     USART_Printf_Init(115200);
     Delay_Ms(500);
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%u\r\n", SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
     printf("Stop Mode Test\r\n");
     EXTI0_INT_INIT();
@@ -144,7 +144,6 @@ void EXTI0_IRQHandler(void)
   if(EXTI_GetITStatus(EXTI_Line0)!=RESET)
   {
     SystemInit();
-    printf("EXTI0 Wake_up\r\n");
     EXTI_ClearITPendingBit(EXTI_Line0);     /* Clear Flag */
   }
 }

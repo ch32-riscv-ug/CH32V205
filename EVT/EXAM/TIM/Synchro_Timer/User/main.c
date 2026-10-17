@@ -166,7 +166,7 @@ int main(void)
 
     while(1)
     {
-          printf("TIM1 cnt:%d\r\n", TIM1->CNT);
+        printf("TIM1 cnt:%d\r\n", TIM1->CNT);
         printf("TIM2 cnt:%d\r\n", TIM2->CNT);
     }
 }

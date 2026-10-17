@@ -212,6 +212,10 @@ void USBFS_IRQHandler( void )
                                             break;
                                     }
                                 }
+                                else
+                                {
+                                    errflag = 0xFF;
+                                }
                             }
                             else
                             {
@@ -323,6 +327,10 @@ void USBFS_IRQHandler( void )
                                 errflag = 0xFF;
                                 break;
                         }
+                    }
+                    else
+                    {
+                        errflag = 0xFF;
                     }
                 }
                 else

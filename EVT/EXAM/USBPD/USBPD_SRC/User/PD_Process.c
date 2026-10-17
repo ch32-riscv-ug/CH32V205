@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
 * File Name          : PD_process.c
 * Author             : WCH
-* Version            : V1.0.1
-* Date               : 2025/03/06
+* Version            : V1.0.2
+* Date               : 2026/10/14
 * Description        : This file provides all the PD firmware functions.
 *********************************************************************************
 * Copyright (c) 2023 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -24,7 +24,7 @@ UINT8 PD_Ack_Buf[ 2 ];                                                          
 
 UINT8  Tmr_Ms_Cnt_Last;                                                         /* System timer millisecond timing final value */
 UINT8  Tmr_Ms_Dlt;                                                              /* System timer millisecond timing this interval value */
-PD_CONTROL PD_Ctl;                                                              /* PD Control Related Structures */
+PD_CONTROL PD_Ctl={0};                                                              /* PD Control Related Structures */
 UINT8  Adapter_SrcCap[ 30 ];                                                    /* Contents of the SrcCap message for the adapter */
 
 UINT8  PDO_Len;
@@ -96,7 +96,6 @@ void USBPD_IRQHandler(void)
     {
         USBPD->STATUS |= IF_RX_RESET;
         PD_SINK_Init( );
-        printf("IF_RX_RESET\r\n");
     }
 }
 
@@ -324,9 +323,9 @@ UINT8 PD_Detect( void )
         }
         else
         {
-            if ((((cmp_cc1 & bCC_CMP_66) == bCC_CMP_66) & ((cmp_cc1 & bCC_CMP_220) == 0x00)) == 1)
+            if ((((cmp_cc1 & bCC_CMP_66) == bCC_CMP_66) && ((cmp_cc1 & bCC_CMP_220) == 0x00)) == 1)
             {
-                if ((((cmp_cc2 & bCC_CMP_22) == bCC_CMP_22) & ((cmp_cc2 & bCC_CMP_66) == 0x00)) == 1)
+                if ((((cmp_cc2 & bCC_CMP_22) == bCC_CMP_22) && ((cmp_cc2 & bCC_CMP_66) == 0x00)) == 1)
                 {
                   ret = 1;
                 }
@@ -336,7 +335,7 @@ UINT8 PD_Detect( void )
                 }
             }
 
-            if ((((cmp_cc2 & bCC_CMP_66) == bCC_CMP_66) & ((cmp_cc2 & bCC_CMP_220) == 0x00)) == 1)
+            if ((((cmp_cc2 & bCC_CMP_66) == bCC_CMP_66) && ((cmp_cc2 & bCC_CMP_220) == 0x00)) == 1)
             {
                 if(ret)
                 {

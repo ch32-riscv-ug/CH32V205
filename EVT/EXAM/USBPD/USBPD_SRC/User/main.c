@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/14
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -36,7 +36,7 @@ void EXTI0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void EXTI1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 #endif
 volatile UINT8  Tim_Ms_Cnt = 0x00;
-
+u8 falg_Wakeup=0;
 /*********************************************************************
  * @fn      TIM1_Init
  *
@@ -111,7 +111,7 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(921600);
-    printf( "SystemClk:%d\r\n", SystemCoreClock );
+    printf ("SystemCoreClk:%lu\r\n", (unsigned long)SystemCoreClock);
     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     printf( "PD SRC TEST\r\n" );
     PD_Init( );
@@ -131,6 +131,11 @@ int main(void)
             PD_Det_Proc( );
         }
         PD_Main_Proc( );
+        if(falg_Wakeup==1)
+        {
+            printf("WakeUp\r\n");
+            falg_Wakeup=0;
+        }
     }
 }
 
@@ -162,7 +167,7 @@ void EXTI0_IRQHandler(void)
   if(EXTI_GetITStatus(EXTI_Line0)!=RESET)
   {
       SystemInit();
-      printf(" GPIO Wake_up\r\n");
+      falg_Wakeup=1;
       EXTI_ClearITPendingBit(EXTI_Line0);     /* Clear Flag */
       NVIC_DisableIRQ(EXTI0_IRQn);
   }
@@ -181,7 +186,7 @@ void EXTI1_IRQHandler(void)
   if(EXTI_GetITStatus(EXTI_Line1)!=RESET)
   {
       SystemInit();
-      printf(" GPIO Wake_up\r\n");
+      falg_Wakeup=1;
       EXTI_ClearITPendingBit(EXTI_Line1);     /* Clear Flag */
       NVIC_DisableIRQ(EXTI1_IRQn);
     }
@@ -203,7 +208,7 @@ void USBPDWakeUp_IRQHandler(void)
       EXTI_ClearITPendingBit(EXTI_Line19);     /* Clear Flag */
       NVIC_DisableIRQ(USBPDWakeUp_IRQn);
       USBPD->CONFIG&=~IE_PD_IO;
-      printf("USBPDWakeUp\r\n");
+      falg_Wakeup=1;
       USBPD->PORT_CC1&=~(CC_PU_Mask);
       USBPD->PORT_CC2&=~(CC_PU_Mask);
       USBPD->PORT_CC1|=CC_PU_330;

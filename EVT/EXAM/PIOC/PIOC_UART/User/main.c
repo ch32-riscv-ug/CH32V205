@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/5/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/14
  * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -28,7 +28,7 @@ void PIOC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 volatile uint8_t  PIOC_TX_FLAG=0;
 volatile uint16_t PIOC_TX_RemainLEN=0;
-uint8_t  *PIOC_TX_ADDR;
+uint8_t * volatile PIOC_TX_ADDR;
 uint32_t PIOC_baudrate=115200;
 uint8_t  PIOC_parity=0;
 uint8_t  PIOC_stopbits=0;
@@ -225,7 +225,11 @@ void PIOC_IRQHandler( void )
 		//Data reception mode
         if((R8_DATA_REG7 & 0X01) == 0)
         {
-            rx_buf[rx++] = R8_DATA_REG31;
+            if(rx < sizeof(rx_buf))
+            {
+                rx_buf[rx++] = R8_DATA_REG31; 
+            }
+            
         }
         //Data Transmission Mode
         //Double buffering with each buffer size of 8 bytes
@@ -233,7 +237,7 @@ void PIOC_IRQHandler( void )
         {
             if(PIOC_TX_FLAG==1)
             {
-                if(PIOC_TX_RemainLEN<=8)
+                if(PIOC_TX_RemainLEN <= 8)
                 {
                     memcpy( UART_SFR_ADDR1, PIOC_TX_ADDR, PIOC_TX_RemainLEN );
                     PIOC_TX_FLAG=0;
@@ -367,7 +371,7 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%u\r\n", SystemCoreClock);
     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     printf("GPIO Toggle TEST\r\n");
     GPIO_Toggle_INIT();

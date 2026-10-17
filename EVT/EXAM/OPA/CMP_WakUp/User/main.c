@@ -142,7 +142,9 @@ void CMPWakeUp_IRQHandler(void)
   if(EXTI_GetITStatus(EXTI_Line22)!=RESET)
   {
 	SystemInit();
+    #if 0
     printf("EXTI Wake_up\r\n");
+    #endif
     EXTI_ClearITPendingBit(EXTI_Line22);     /* Clear Flag */
   }
 }

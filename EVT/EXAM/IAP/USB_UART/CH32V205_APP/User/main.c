@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : main.c
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/15
  * Description        : Main program body.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -30,7 +30,7 @@
 /*********************************************************************
  * @fn      GPIO_Toggle_INIT
  *
- * @brief   Initializes GPIOA.0
+ * @brief   Initializes GPIOA.1
  *
  * @return  none
  */
@@ -87,7 +87,7 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);
-    printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf("SystemClk:%u\r\n", SystemCoreClock);
     printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     printf("APP\r\n");
     GPIO_Toggle_INIT();
@@ -104,16 +104,18 @@ int main(void)
         {
              Delay_Ms(10);
              APP_2_IAP();
-             while(1);
+             while(1)
+             {
+             }
         }
     }
 }
 
 void USART2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 /*********************************************************************
- * @fn      USART3_IRQHandler
+ * @fn      USART2_IRQHandler
  *
- * @brief   This function handles USART3 global interrupt request.
+ * @brief   This function handles USART2 global interrupt request.
  *
  * @return  none
  */

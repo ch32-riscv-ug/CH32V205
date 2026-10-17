@@ -86,7 +86,6 @@ void UART_CfgInit( uint32_t baudrate, uint8_t stopbits, uint8_t parity )
 {
     USART_InitTypeDef USART_InitStructure = {0};
     GPIO_InitTypeDef  GPIO_InitStructure = {0};
-    uint16_t dat = dat;
 
     /* delete contains in ( ... )  */
     /* First set the serial port introduction to output high then close the TE and RE of CTLR1 register (note that USARTx->CTLR1 register setting 9 bits has a limit) */
@@ -281,7 +280,7 @@ void UART_DMAInit( uint8_t type, uint8_t *pbuf, uint32_t len )
  * @fn      UART_Init
  *
  * @brief   CDC total initialization
- *          mode     : See the useage of UART_ParaInit( mode )
+ *          mode     : See the usage of UART_ParaInit( mode )
  *          baudrate : Serial port 2 default baud rate
  *          stopbits : Serial port 2 default stop bits
  *          parity   : Serial port 2 default parity
@@ -352,7 +351,6 @@ void UART_DataTx_Deal( void )
             Uart.Tx_Flag = 0x00;
 
             NVIC_DisableIRQ( USBHS_IRQn );
-            NVIC_DisableIRQ( USBHS_IRQn );
 
             /* Calculate the variables of last data */
             count = Uart.Tx_CurPackLen - DEF_UART_TX_DMA_CH->CNTR;
@@ -418,7 +416,6 @@ void UART_DataRx_Deal( void )
 
     /* Serial port data DMA receive processing */
     NVIC_DisableIRQ( USBHS_IRQn );
-    NVIC_DisableIRQ( USBHS_IRQn );
     UARTx_Rx_DMACurCount = DEF_UART_RX_DMA_CH->CNTR;
     if( UARTx_Rx_DMALastCount != UARTx_Rx_DMACurCount )
     {
@@ -477,7 +474,6 @@ void UART_DataRx_Deal( void )
             if( packlen )
             {
                 NVIC_DisableIRQ( USBHS_IRQn );
-                NVIC_DisableIRQ( USBHS_IRQn );
                 Uart.USB_Up_IngFlag = 0x01;
                 Uart.USB_Up_TimeOut = 0x00;
                 USBHSD->UEP2_TX_DMA = (uint32_t)(uint8_t *)&UART_Rx_Buf[ Uart.Rx_DealPtr ];
@@ -519,7 +515,6 @@ void UART_DataRx_Deal( void )
         {
             if( Uart.USB_Up_TimeOut >= ( DEF_UARTx_RX_TIMEOUT * 20 ) )
             {
-                NVIC_DisableIRQ( USBHS_IRQn );
                 NVIC_DisableIRQ( USBHS_IRQn );
                 Uart.USB_Up_IngFlag = 0x01;
                 Uart.USB_Up_TimeOut = 0x00;
