@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
  * File Name          : ch32v205_flash.h
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/28
  * Description        : This file contains all the functions prototypes for the FLASH
  *                      firmware library.
  *********************************************************************************
@@ -116,6 +116,7 @@ typedef enum
 
 /*Functions used for all devices*/
 void         FLASH_SetLatency(uint32_t FLASH_Latency);
+void         FLASH_PrefetchBufferCmd(uint32_t FLASH_PrefetchBuffer);
 void         FLASH_Unlock(void);
 void         FLASH_Lock(void);
 FLASH_Status FLASH_ErasePage(uint32_t Page_Address);

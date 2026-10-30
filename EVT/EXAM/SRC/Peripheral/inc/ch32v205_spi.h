@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
  * File Name          : ch32v205_spi.h
  * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2025/05/20
+ * Version            : V1.0.1
+ * Date               : 2026/10/28
  * Description        : This file contains all the functions prototypes for the
  *                      SPI firmware library.
  *********************************************************************************
@@ -132,7 +132,6 @@ void       SPI_I2S_DeInit(SPI_TypeDef *SPIx);
 void       SPI_Init(SPI_TypeDef *SPIx, SPI_InitTypeDef *SPI_InitStruct);
 void       SPI_StructInit(SPI_InitTypeDef *SPI_InitStruct);
 void       SPI_Cmd(SPI_TypeDef *SPIx, FunctionalState NewState);
-void       I2S_Cmd(SPI_TypeDef *SPIx, FunctionalState NewState);
 void       SPI_I2S_ITConfig(SPI_TypeDef *SPIx, uint8_t SPI_I2S_IT, FunctionalState NewState);
 void       SPI_I2S_DMACmd(SPI_TypeDef *SPIx, uint16_t SPI_I2S_DMAReq, FunctionalState NewState);
 void       SPI_I2S_SendData(SPI_TypeDef *SPIx, uint16_t Data);

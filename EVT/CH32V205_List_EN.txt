@@ -1,5 +1,5 @@
 
-Nanjing Qinheng Microelectronics Co., Ltd. 2026.08
+Nanjing Qinheng Microelectronics Co., Ltd. 2026.10
 
 https://wch-ic.com
 
@@ -33,6 +33,7 @@ Directory
   |      |      |      |      |-- SoftUART：I/O port simulation serial port routine 
   |      |      |      |      |-- WS2812_LED：SPI\PWM Operates WS2812_LED routine
   |      |      |      |      |-- WUI：WCHGUI routine
+  |      |      |      |      |-- EEPROM_Emulation: The routine demonstrates flash simulation of EEPROM
   |      |      |      |-- BKP
   |      |      |      |      |-- BKP：BKP routine 
   |      |      |      |-- CAN
@@ -168,6 +169,8 @@ Directory
   |      |      |      |      |-- SPI_CRC：use CRC error check and master / slave mode transceiver routine
   |      |      |      |      |-- SPI_DMA：SPI uses DMA, master / slave mode transceiver routine
   |      |      |      |      |-- SPI_FLASH：SPI interface operation flash peripheral routine
+  |      |      |      |      |-- SPI_DMA_EXT: SPI Master and Slave use DMA full-duplex transmission and reception routine
+  |      |      |      |      |-- SPI_SDCARD: SPI SD card FatFs routine
   |      |      |      |-- TIM
   |      |      |      |      |-- Clock_Select: clock source selection routine
   |      |      |      |      |-- ComplementaryOutput_DeadTime: complementary output and deadband insertion mode routines
@@ -204,6 +207,7 @@ Directory
   |      |      |      |      |-- USART_SynchronousMode: synchronous mode, master/slave mode, transceiver routine
   |      |      |      |      |-- USART_Idle_Recv：USART use DMA receiving indeterminate length data routines
   |      |      |      |      |-- USART_SmartCard: Serial port smart card routine
+  |      |      |      |      |-- USART_DMA_EXT: USART send and receive data through DMA routine
   |      |      |      |-- USB
   |      |      |      |      |-- USBFS
   |      |      |      |      |      |-- DEVICE

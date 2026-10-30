@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
  * File Name          : ch32v205_flash.c
  * Author             : WCH
- * Version            : V1.0.1
- * Date               : 2026/08/18
+ * Version            : V1.0.2
+ * Date               : 2026/10/27
  * Description        : This file provides all the FLASH firmware functions.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -12,7 +12,7 @@
 #include "ch32v205_flash.h"
 
 /* Flash Access Control Register bits */
-#define ACR_LATENCY_Mask           ((uint32_t)0xFFFFFFFC)
+#define ACR_LATENCY_Mask           ((uint32_t)0xFFFFFFF0)
 
 /* Flash Control Register bits */
 #define CR_PER_Set                 ((uint32_t)0x00000002)
@@ -59,7 +59,7 @@
 /* FLASH Size */
 #define Size_256B                  0x100
 #define Size_2KB                   0x800
-#define Size_64KB                  0x8000
+#define Size_64KB                  0x10000
 
 /********************************************************************************
  * @fn      FLASH_SetLatency
@@ -837,7 +837,7 @@ FLASH_Status FLASH_ROM_ERASE(uint32_t StartAddr, uint32_t Length)
         return FLASH_ADR_RANGE_ERROR;
     }
 
-    if((StartAddr + Length) > ValidAddrEnd)
+    if(Length > (ValidAddrEnd - StartAddr))
     {
         return FLASH_OP_RANGE_ERROR;
     }
@@ -984,7 +984,7 @@ FLASH_Status FLASH_ROM_WRITE(uint32_t StartAddr, uint32_t *pbuf, uint32_t Length
         return FLASH_ADR_RANGE_ERROR;
     }
 
-    if((StartAddr + Length) > ValidAddrEnd)
+    if(Length > (ValidAddrEnd - StartAddr))
     {
         return FLASH_OP_RANGE_ERROR;
     }

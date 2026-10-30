@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT  *******************************
  * File Name          : ch32v205_opa.c
  * Author             : WCH
- * Version            : V1.0.1
- * Date               : 2025/08/20
+ * Version            : V1.0.2
+ * Date               : 2025/10/28
  * Description        : This file provides all the OPA firmware functions.
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -198,7 +198,7 @@ void OPA_CMP_Init(CMP_Num_TypeDef CMP_NUM, CMP_InitTypeDef *CMP_InitStruct)
         tmp0 |= ((uint32_t)CMP_InitStruct->CMP_Out_Mode << 1) |
                 ((uint32_t)CMP_InitStruct->NSEL << 3) |
                 ((uint32_t)CMP_InitStruct->PSEL << 5) |
-                ((((uint32_t)CMP_InitStruct->HYS & 0x01) << 7) | (((uint32_t)CMP_InitStruct->HYS & 0x02) << 29));
+                ((((uint32_t)CMP_InitStruct->HYS & 0x01) << 7) | (((uint32_t)CMP_InitStruct->HYS & 0x02) << 18));
         OPA->CMP_CTLR = tmp0;
     }
     else  if(CMP_NUM == CMP2)
@@ -207,7 +207,7 @@ void OPA_CMP_Init(CMP_Num_TypeDef CMP_NUM, CMP_InitTypeDef *CMP_InitStruct)
         tmp0 |= ((uint32_t)CMP_InitStruct->CMP_Out_Mode << 9) |
                 ((uint32_t)CMP_InitStruct->NSEL << 11) |
                 ((uint32_t)CMP_InitStruct->PSEL << 13) |
-                ((((uint32_t)CMP_InitStruct->HYS & 0x01) << 15) | (((uint32_t)CMP_InitStruct->HYS & 0x02) << 30));;
+                ((((uint32_t)CMP_InitStruct->HYS & 0x01) << 15) | (((uint32_t)CMP_InitStruct->HYS & 0x02) << 28));;
         OPA->CMP_CTLR = tmp0;
     }
 }
@@ -615,6 +615,6 @@ FlagStatus OPA1_GetITStatus(uint32_t OPA_IT)
  */
 void OPA1_ClearITPendingBit(uint32_t OPA_IT)
 {
-    OPA->OPCM_SR &= (uint32_t)~(OPA_IT >> 16);
+    OPA->OPCM_SR |= (uint32_t)(OPA_IT >> 16);
 }
 
