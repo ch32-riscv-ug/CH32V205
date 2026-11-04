@@ -2,7 +2,7 @@
 
 <!-- This file is generated from ch32-riscv-ug/ch32-device-data (index/ + evidence/ + pipeline/build/build_readme.py). Edit there, not here. -->
 
-[Choose a part](#product-comparison) &middot; [Pin viewer](https://ch32-riscv-ug.github.io/ch32-device-data/pins.html?chip=CH32V205) &middot; [Pin maps](#pin-maps--alternate-functions) &middot; [Errata](#errata) &middot; [Examples](#evt-examples) &middot; [Documents](#documents) &middot; [Address map](#address-map)
+[Choose a part](#product-comparison) &middot; [Documents](#documents) &middot; [Pin maps](#pin-maps--alternate-functions) &middot; [Pin viewer](https://ch32-riscv-ug.github.io/ch32-device-data/pins.html?chip=CH32V205) &middot; [Errata](#errata) &middot; [Examples](#evt-examples) &middot; [Address map](#address-map)
 
 ## Quick start
 
@@ -15,6 +15,11 @@ Where these land **without writing a remap register**. SWD is live at reset; the
 | CH32V205 | PA13 | PA14 | none by default[^af] | none by default[^af] |
 
 [^af]: This series selects every pin function through `AFIO->GPIOx_AFLR/AFHR` rather than through AFIO remap, so no USART is routed out until software picks one -- the pads it **can** go on are listed under Pin definitions. The reset value of `GPIOx_AFLR/AFHR` is 0, which selects AF0 (a real function, not "none"), and a pad only drives its alternate function once its GPIO mode is set to alternate.
+
+### Datasheets and reference manual
+
+- CH32V205DS0.PDF (datasheet): [English](https://ch32-riscv-ug.github.io/CH32V205/datasheet_en/CH32V205DS0.PDF) · [中文](https://ch32-riscv-ug.github.io/CH32V205/datasheet_zh/CH32V205DS0.PDF)
+- CH32V205RM.PDF (reference manual): [English](https://ch32-riscv-ug.github.io/CH32V205/datasheet_en/CH32V205RM.PDF) · [中文](https://ch32-riscv-ug.github.io/CH32V205/datasheet_zh/CH32V205RM.PDF)
 
 ## Series
 
@@ -65,6 +70,36 @@ Only the 2 rows that differ between these 3 products; the other 24 are the same 
 | Rated voltage | 3.3V | 3.3V | 3.3V |
 
 </details>
+
+## Block diagrams
+
+### CH32V205
+
+<img src="image/system_CH32V205.png" alt="CH32V205 system block diagram" />
+
+System block diagram from the [WCH product page](https://www.wch-ic.com/products/CH32V205.html).
+
+<details><summary>Internal block diagram (datasheet)</summary>
+
+<img src="image/architecture_CH32V205.png" alt="CH32V205 internal block diagram" />
+
+</details>
+
+## Documents
+
+| Document | Kind | English | 中文 |
+|---|---|---|---|
+| CH32V205DS0.PDF | datasheet | [page](https://www.wch-ic.com/downloads/CH32V205DS0_PDF.html) [mirror](https://ch32-riscv-ug.github.io/CH32V205/datasheet_en/CH32V205DS0.PDF) v1.3 | [page](https://www.wch.cn/downloads/CH32V205DS0_PDF.html) [mirror](https://ch32-riscv-ug.github.io/CH32V205/datasheet_zh/CH32V205DS0.PDF) v1.3 |
+| CH32V205RM.PDF | reference-manual | [page](https://www.wch-ic.com/downloads/CH32V205RM_PDF.html) [mirror](https://ch32-riscv-ug.github.io/CH32V205/datasheet_en/CH32V205RM.PDF) v1.2 | [page](https://www.wch.cn/downloads/CH32V205RM_PDF.html) [mirror](https://ch32-riscv-ug.github.io/CH32V205/datasheet_zh/CH32V205RM.PDF) v1.2 |
+| CH32V205EVT.ZIP | evt | - | [page](https://www.wch.cn/downloads/CH32V205EVT_ZIP.html) [mirror](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT) v1.4 |
+
+### Evaluation boards
+
+- board-manual:en: [CH32V205 Evaluation Board Reference-EN.pdf](https://ch32-riscv-ug.github.io/CH32V205/EVT/PUB/CH32V205%20Evaluation%20Board%20Reference-EN.pdf)
+- board-manual:zh: [CH32V205评估板说明书.pdf](https://ch32-riscv-ug.github.io/CH32V205/EVT/PUB/CH32V205%E8%AF%84%E4%BC%B0%E6%9D%BF%E8%AF%B4%E6%98%8E%E4%B9%A6.pdf)
+- schematic-pdf: [CH32V205SCH.pdf](https://ch32-riscv-ug.github.io/CH32V205/EVT/PUB/CH32V205SCH.pdf)
+
+4 board schematics under `EVT/PUB/SCHPCB/`: `CH32V203CCT-R0`, `CH32V205CCT-R0`, `CH32V205RCT-R0`, `CH32V205VCT-R0`
 
 ## Packages & pinout drawings
 
@@ -281,11 +316,6 @@ Pin functions (filterable): [ALL](https://ch32-riscv-ug.github.io/ch32-device-da
 
 </details>
 
-## Block diagrams
-
-### CH32V205
-<img src="image/architecture_CH32V205.png" alt="CH32V205 block diagram" />
-
 ## Errata
 
 - CAN and USBPD functions are not provided (applies to the products listed in CH32V205DS0, including CH32V203CCT6). *(applies: CH32V205; 5th digit of lot number = 0)*
@@ -295,22 +325,6 @@ Pin functions (filterable): [ALL](https://ch32-riscv-ug.github.io/ch32-device-da
 164 routines in [EVT/EXAM](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM):
 
 [ADC](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/ADC) 7 · [APPLICATION](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/APPLICATION) 5 · [BKP](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/BKP) 1 · [CAN](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/CAN) 3 · [CRC](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/CRC) 1 · [DMA](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/DMA) 4 · [EXTI](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/EXTI) 1 · [FLASH](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/FLASH) 1 · [FSMC](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/FSMC) 4 · [GPIO](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/GPIO) 1 · [HarmonyOS](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/HarmonyOS) 1 · [I2C](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/I2C) 6 · [IAP](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/IAP) 1 · [INT](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/INT) 2 · [IWDG](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/IWDG) 1 · [OPA](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/OPA) 5 · [PIOC](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/PIOC) 18 · [PWR](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/PWR) 8 · [QSPI](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/QSPI) 3 · [RCC](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/RCC) 5 · [RT-Thread](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/RT-Thread) 1 · [RTC](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/RTC) 3 · [RunInRam_LP](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/RunInRam_LP) 4 · [SDI_Printf](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/SDI_Printf) 1 · [SPI](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/SPI) 7 · [SYSTICK](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/SYSTICK) 1 · [TIM](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/TIM) 14 · [TOUCHKEY](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/TOUCHKEY) 4 · [TencentOS](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/TencentOS) 1 · [USART](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/USART) 11 · [USB](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/USB) 36 · [USBPD](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/USBPD) 2 · [WWDG](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT/EXAM/WWDG) 1
-
-## Documents
-
-| Document | Kind | English | 中文 |
-|---|---|---|---|
-| CH32V205DS0.PDF | datasheet | [page](https://www.wch-ic.com/downloads/CH32V205DS0_PDF.html) [mirror](https://ch32-riscv-ug.github.io/CH32V205/datasheet_en/CH32V205DS0.PDF) v1.3 | [page](https://www.wch.cn/downloads/CH32V205DS0_PDF.html) [mirror](https://ch32-riscv-ug.github.io/CH32V205/datasheet_zh/CH32V205DS0.PDF) v1.3 |
-| CH32V205RM.PDF | reference-manual | [page](https://www.wch-ic.com/downloads/CH32V205RM_PDF.html) [mirror](https://ch32-riscv-ug.github.io/CH32V205/datasheet_en/CH32V205RM.PDF) v1.2 | [page](https://www.wch.cn/downloads/CH32V205RM_PDF.html) [mirror](https://ch32-riscv-ug.github.io/CH32V205/datasheet_zh/CH32V205RM.PDF) v1.2 |
-| CH32V205EVT.ZIP | evt | - | [page](https://www.wch.cn/downloads/CH32V205EVT_ZIP.html) [mirror](https://github.com/ch32-riscv-ug/CH32V205/tree/main/EVT) v1.4 |
-
-### Evaluation boards
-
-- board-manual:en: [CH32V205 Evaluation Board Reference-EN.pdf](https://github.com/ch32-riscv-ug/CH32V205/blob/main/EVT/PUB/CH32V205%20Evaluation%20Board%20Reference-EN.pdf)
-- board-manual:zh: [CH32V205评估板说明书.pdf](https://github.com/ch32-riscv-ug/CH32V205/blob/main/EVT/PUB/CH32V205%E8%AF%84%E4%BC%B0%E6%9D%BF%E8%AF%B4%E6%98%8E%E4%B9%A6.pdf)
-- schematic-pdf: [CH32V205SCH.pdf](https://github.com/ch32-riscv-ug/CH32V205/blob/main/EVT/PUB/CH32V205SCH.pdf)
-
-4 board schematics under `EVT/PUB/SCHPCB/`: `CH32V203CCT-R0`, `CH32V205CCT-R0`, `CH32V205RCT-R0`, `CH32V205VCT-R0`
 
 ## Reference
 
