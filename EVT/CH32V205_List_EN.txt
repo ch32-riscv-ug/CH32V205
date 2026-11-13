@@ -32,7 +32,9 @@ Directory
   |      |      |      |      |-- CoreMark：CoreMark routine 
   |      |      |      |      |-- SoftUART：I/O port simulation serial port routine 
   |      |      |      |      |-- WS2812_LED：SPI\PWM Operates WS2812_LED routine
-  |      |      |      |      |-- WUI：WCHGUI routine
+  |      |      |      |      |-- WUIGUI
+  |      |      |      |      |      |-- WUI-GUI-FLASH：WUI-GUI-FLASH routine 
+  |      |      |      |      |      |-- WUI-GUI-LIVE：WUI-GUI-LIVE routine 
   |      |      |      |      |-- EEPROM_Emulation: The routine demonstrates flash simulation of EEPROM
   |      |      |      |-- BKP
   |      |      |      |      |-- BKP：BKP routine 

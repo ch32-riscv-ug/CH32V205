@@ -32,7 +32,9 @@ https://wch.cn
   |      |      |      |      |-- CoreMark：CoreMark跑分例程
   |      |      |      |      |-- SoftUART：I/O口模拟串口例程
   |      |      |      |      |-- WS2812_LED：通过SPI\PWM操作WS2812例程 
-  |      |      |      |      |-- WUI：WCHGUI例程
+  |      |      |      |      |-- WUIGUI
+  |      |      |      |      |      |-- WUI-GUI-FLASH：WUI-GUI-FLASH例程 
+  |      |      |      |      |      |-- WUI-GUI-LIVE：WUI-GUI-LIVE例程
   |      |      |      |      |-- EEPROM_Emulation: 例程演示了flash 模拟EEPROM
   |      |      |      |-- BKP
   |      |      |      |      |-- BKP：BKP例程 
