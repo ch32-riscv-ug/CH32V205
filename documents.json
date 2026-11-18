@@ -57,8 +57,8 @@
       "sources": {
         "en": {
           "file_id": 440,
-          "version": "1.2",
-          "scope": ""
+          "version": "1.3",
+          "scope": "CH32V203CCT6, CH32V205CCT6, CH32V205RCT6, CH32V205VCT6"
         },
         "zh": {
           "file_id": 537,
